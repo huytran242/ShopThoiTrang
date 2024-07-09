@@ -28,7 +28,7 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null || _context.users == null)
             {
@@ -88,7 +88,7 @@ namespace WebThoiTrang.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Password,Email,CreatedAt")] User user)
+        public async Task<IActionResult> Edit(Guid id, [Bind("UserId,Username,Password,Email,CreatedAt")] User user)
         {
             if (id != user.UserId)
             {
@@ -119,7 +119,7 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null || _context.users == null)
             {
@@ -155,7 +155,7 @@ namespace WebThoiTrang.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(Guid id)
         {
           return (_context.users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
