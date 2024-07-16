@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Knight Bootstrap Template - Index</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="~/img/favicon.png" rel="icon">
+    <link href="~/css/style.css rel="apple-touch-icon">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="" rel="stylesheet" />
+    <!-- Vendor CSS Files -->
+    <link href="~/aos/aos.css rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/swiper/swiper-bundle.min.css" rel="stylesheet">
+    
+    <!-- Template Main CSS File -->
+    <link href="~/css/style.css" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: Knight
+    * Template URL: https://bootstrapmade.com/knight-free-bootstrap-theme/
+    * Updated: Mar 17 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <div class="logo">
+                <a asp-action="IndexShop"><img src="/img/logo.png" alt="" class="img-fluid"></a>
+            </div>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link scrollto active" asp-action="IndexShop" >Home</a></li>
+                    <li><a class="nav-link scrollto" asp-action="Bills">Hóa đơn đã mua</a></li>
+                    <li><a class="nav-link scrollto" href="#services">Services</a></li>
+                    <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
+                    <li><a class="nav-link scrollto" href="#team">Team</a></li>
+
+                    <li class="dropdown">
+                        <a href="#"><span>Tài khoản</span> <i class="bi bi-chevron-down"></i></a>
+                        <ul>
+
+                            <li><a asp-action="Account">Chỉnh sửa</a></li>
+                            <li><a asp-action="CreateMember">Đăng kí</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a class="nav-link scrollto" href="#contact">Phản hồi</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+    <!-- Vendor JS Files -->
+
+    <script src="~/aos/aos.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/glightbox/js/glightbox.min.js"></script>
+    <script src="~/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="~/swiper/swiper-bundle.min.js"></script>
+    <script src="~/php-email-form/validate.js"></script>
+    <!-- Template Main JS File -->
+    <script src="~/js/main.js"></script>
+    @RenderBody()
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>
