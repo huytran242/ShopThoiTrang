@@ -13,7 +13,22 @@ body {
   font-family: "Open Sans", sans-serif;
   color: #555555;
 }
+@media (min-width: 1025px) {
+    .h-custom {
+        height: 100vh !important;
+    }
+}
 
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .75em;
+    padding-right: .75em;
+}
+
+.card-registration .select-arrow {
+    top: 13px;
+}
 a {
   text-decoration: none;
   color: #7cc576;

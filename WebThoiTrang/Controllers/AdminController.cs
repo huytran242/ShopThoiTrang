@@ -23,7 +23,14 @@ namespace WebThoiTrang.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        // GET: Products
+        public IActionResult Logout()
+        {
+            // Clear the session
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page or home page
+            return RedirectToAction("IndexLogin", "Login");
+        }
         public IActionResult IndexAdmin()
         {
             string username = HttpContext.Session.GetString("Username");

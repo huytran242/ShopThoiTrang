@@ -16,7 +16,13 @@ namespace WebThoiTrang.Controllers
             _logger = logger;
             _context = context;
         }
+        public ActionResult Logout()
+        {
+            HttpContext.Session.Clear();
 
+            // Redirect to the login page or home page
+            return RedirectToAction("IndexShop", "Home");
+        }
         public async Task<IActionResult> IndexShop()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -29,21 +35,21 @@ namespace WebThoiTrang.Controllers
         }
         public async Task<IActionResult> Bills(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
 
-            var product = await _context.products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+            //var product = await _context.products
+            //    .Include(p => p.Category)
+            //    .FirstOrDefaultAsync(m => m.ProductId == id);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
+            //if (product == null)
+            //{
+            //    return NotFound();
+            //}
 
-            return View(product);
+            return View();
         }
     
 
