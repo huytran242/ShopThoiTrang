@@ -10,7 +10,7 @@
         <div class="hero-container">
             <a href="index.html" class="hero-logo" data-aos="zoom-in"><img src="/img/hero-logo.png" alt=""></a>
             <h1 data-aos="zoom-in">Welcome To Knight Studios</h1>
-
+            <h1>Welcome, @ViewData["Username"]!</h1>
         </div>
     </section><!-- End Hero -->
     <main id="main">
@@ -47,7 +47,7 @@
                                     <h4>@product.Name</h4>
                                     <p>@product.Category.Name</p>
                                     <div class="portfolio-links">
-                                        <a href="@product.img" data-gallery="portfolioGallery" class="portfolio-lightbox" title="@product.Name"><i class="bx bx-plus"></i></a>
+                                        <a asp-action="Bills" asp-route-id="@product.ProductId" class="portfolio-lightbox"><i class="bx bx-plus"></i></a>
                                         <a asp-action="Details" asp-route-id="@product.ProductId" title="More Details"><i class="bx bx-link"></i></a>
                                     </div>
                                 </div>

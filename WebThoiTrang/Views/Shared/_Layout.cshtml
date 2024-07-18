@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -55,13 +56,23 @@
                     <li><a class="nav-link scrollto" href="#team">Team</a></li>
 
                     <li class="dropdown">
-                        <a href="#"><span>Tài khoản</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
+                        <a href="#">
+                            @if (ViewData["Username"] != null)
+                            {
+                                <span class="nav-text"> @ViewData["Username"]</span>
+                            }
+                            else
+                            {
+                                <span class="nav-text"> Guest</span>
+                            }
+                            <ul>
 
-                            <li><a asp-action="Account">Chỉnh sửa</a></li>
-                            <li><a asp-action="CreateMember">Đăng kí</a></li>
+                                <li><a asp-action="Account">Chỉnh sửa</a></li>
+                                <li><a asp-action="UserCreate">Đăng kí</a></li>
+                                <li><a asp-action="IndexLogin" asp-controller="Login">Đăng nhập</a></li>
 
-                        </ul>
+                            </ul>
+                        </a>
                     </li>
                     <li><a class="nav-link scrollto" href="#contact">Phản hồi</a></li>
                 </ul>

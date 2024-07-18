@@ -26,12 +26,20 @@ namespace WebThoiTrang.Controllers
         // GET: Products
         public IActionResult IndexAdmin()
         {
+            string username = HttpContext.Session.GetString("Username");
+
+            // Đưa giá trị Username vào ViewData để sử dụng trong view
+            ViewData["Username"] = username;
+
+
             return View();
+          
         }
         public async Task<IActionResult> ProductAdmin()
         {
             var products = await _context.products.Include(p => p.Category).ToListAsync();
             return View(products);
+            
         }
 
         // GET: Products/Details/5
@@ -60,7 +68,7 @@ namespace WebThoiTrang.Controllers
         {
             ViewData["CategoryId"] = new SelectList(_context.categories, "CategoryId", "Name");
             return View();
-        }
+        } 
 
         // POST: Products/Create
 
@@ -148,12 +156,27 @@ namespace WebThoiTrang.Controllers
                 {
                     try
                     {
-                        // Lưu ảnh vào thư mục và lấy đường dẫn
+                    var existingProduct = await _context.products.FindAsync(id);
+                   
+                    existingProduct.Name = product.Name;
+                    existingProduct.Description = product.Description;
+                    existingProduct.Price = product.Price;
+                    existingProduct.Stock = product.Stock;
+                    existingProduct.CategoryId = product.CategoryId;
+                    if (imgFile != null && imgFile.Length > 0)
+                    {
                         string imgPath = await SaveImageAsync(imgFile);
-
-                        // Lưu đường dẫn ảnh vào thuộc tính Img của product
                         product.img = imgPath;
-
+                    }
+                    else
+                    {
+                      
+                      
+                        if (existingProduct != null)
+                        {
+                            product.img = existingProduct.img;
+                        }
+                    }
 
                         // Kiểm tra nếu category tồn tại
                         var category = await _context.categories.FindAsync(product.CategoryId);
@@ -163,25 +186,27 @@ namespace WebThoiTrang.Controllers
                             PopulateCategoriesDropdownList(product.CategoryId); // Trả về dropdownlist với category đã chọn
                             return View(product);
                         }
-                        product.Category = category;
-
-                        // Thiết lập các giá trị khác cho product
-                   
-              
-                        product.UpdatedAt = DateTime.UtcNow;
-
-                        // Thêm product vào DbContext và lưu thay đổi
-                        _context.Update(product);
+                       existingProduct.Category = category;
+                       existingProduct.UpdatedAt = DateTime.Now;
+                 
                         // Lưu sản phẩm vào cơ sở dữ liệu
                         await _context.SaveChangesAsync();
 
-                        return RedirectToAction("ProductAdmin");
+                    
                     }
-                    catch (Exception ex)
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExists(product.ProductId))
                     {
-                        ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
                     }
                 }
+                return RedirectToAction("ProductAdmin");
+            }
                 // Tìm category từ database dựa trên CategoryId của product
                 PopulateCategoriesDropdownList(product.CategoryId);
                 return View(product);
@@ -230,14 +255,14 @@ namespace WebThoiTrang.Controllers
         }
 
         // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("ProductDelete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var product = await _context.products.FindAsync(id);
             _context.products.Remove(product);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("ProductAdmin");
         }
 
         private bool ProductExists(Guid id)
@@ -379,7 +404,7 @@ namespace WebThoiTrang.Controllers
             }
 
             // POST: Categories/Delete/5
-            [HttpPost, ActionName("Delete")]
+            [HttpPost, ActionName("DeleteCategory")]
             [ValidateAntiForgeryToken]
             public async Task<IActionResult> DeleteCateConfirmed(Guid id)
             {
@@ -526,6 +551,36 @@ namespace WebThoiTrang.Controllers
             }
         //////////////////////////
         //////////////////////////
+        ///
+          // GET: Users
+        public async Task<IActionResult> Index()
+        {
+            return _context.users != null ?
+                        View(await _context.users.ToListAsync()) :
+                        Problem("Entity set 'DbContextShop.users'  is null.");
+        }
+
+        // GET: Users/Details/5
+        public async Task<IActionResult> Details(Guid id)
+        {
+            if (id == null || _context.users == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.users
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        // GET: Users/Create
+     
+    
     }
 }
 

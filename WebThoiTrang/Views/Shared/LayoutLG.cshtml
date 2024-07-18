@@ -1,4 +1,5 @@
-﻿@* <!DOCTYPE html>
+﻿@model LoginVM
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,30 +18,41 @@
             <span>Login to your account</span>
         </div>
         <div class='login_fields'>
-            <div class='login_fields__user'>
-                <div class='icon'>
-                    <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/user_icon_copy.png'>
+
+            <form asp-action="IndexLogin" method="post">
+                <div class="login_fields__user">
+                    <div class="icon">
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/user_icon_copy.png" />
+                    </div>
+                    <input asp-for="Username" placeholder="Username" type="text" class="form-control" />
+                    <div class="validation">
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png" />
+                    </div>
+                    <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
-                <input placeholder='Username' type='text'>
-                <div class='validation'>
-                    <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png'>
+
+                <div class="login_fields__password">
+                    <div class="icon">
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/lock_icon_copy.png" />
+                    </div>
+                    <input asp-for="Password" placeholder="Password" type="password" class="form-control" />
+                    <div class="validation">
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                </input>
-            </div>
-            <div class='login_fields__password'>
-                <div class='icon'>
-                    <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/lock_icon_copy.png'>
+
+                <div class="login_fields__submit">
+                    <input type="submit" value="Log In" class="btn btn-primary" />
                 </div>
-                <input placeholder='Password' type='password'>
-                <div class='validation'>
-                    <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/tick.png'>
-                </div>
-            </div>
-            <div class='login_fields__submit'>
-                <input type='submit' value='Log In'>
-                <div class='forgot'>
-                    <a href='#'>Forgotten password?</a>
-                </div>
+            </form>
+
+            @section Scripts {
+                @{
+                    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+                }
+            }
+             
             </div>
         </div>
         <div class='success'>
@@ -61,4 +73,4 @@
     <script src="~/js/LoginJs.js"></script>
 </body>
 @RenderBody()
-</html> *@
+</html>
