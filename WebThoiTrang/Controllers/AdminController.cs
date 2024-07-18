@@ -2,14 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 using System.IO;
+=======
+using System.Diagnostics;
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 using WebThoiTrang.Models;
 
 namespace WebThoiTrang.Controllers
 {
+<<<<<<< HEAD
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -41,11 +46,30 @@ namespace WebThoiTrang.Controllers
 
             return View();
           
+=======
+    public class AdminController: Controller
+    {
+        private readonly ILogger<AdminController> _logger;
+        private readonly DbContextShop _context;
+
+
+        public AdminController(ILogger<AdminController> logger, DbContextShop context)
+        {
+            _logger = logger;
+            _context = context;
+        }
+     
+        // GET: Products
+        public IActionResult IndexAdmin()
+        {
+            return View();
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         }
         public async Task<IActionResult> ProductAdmin()
         {
             var products = await _context.products.Include(p => p.Category).ToListAsync();
             return View(products);
+<<<<<<< HEAD
             
         }
 
@@ -53,6 +77,13 @@ namespace WebThoiTrang.Controllers
         public async Task<IActionResult> ProductDetails(Guid id)
         {
 
+=======
+        }
+
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(Guid id)
+        {
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
             if (id == null)
             {
                 return NotFound();
@@ -61,7 +92,10 @@ namespace WebThoiTrang.Controllers
             var product = await _context.products
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
+<<<<<<< HEAD
 
+=======
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
             if (product == null)
             {
                 return NotFound();
@@ -71,6 +105,7 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Products/Create
+<<<<<<< HEAD
         public IActionResult CreateProduct()
         {
             ViewData["CategoryId"] = new SelectList(_context.categories, "CategoryId", "Name");
@@ -148,10 +183,49 @@ namespace WebThoiTrang.Controllers
 
             // Load lại danh sách Category (nếu cần thiết)
             ViewBag.CategoryId = new SelectList(_context.categories, "CategoryId", "Name", product.CategoryId);
+=======
+        public IActionResult ProductAdminCreate()
+        {
+            ViewData["CategoryId"] = new SelectList(_context.categories, "CategoryId", "Name");
+            return View();
+        }
+
+        // POST: Products/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProduct(Product product)
+        {
+            // Log the entire ModelState
+            foreach (var state in ModelState)
+            {
+                var key = state.Key;
+                var errors = state.Value.Errors;
+                _logger.LogError($"Key: {key}, Attempted Value: {state.Value.AttemptedValue}, Validation State: {state.Value.ValidationState}");
+                foreach (var error in errors)
+                {
+                    _logger.LogError($"Error in {key}: {error.ErrorMessage}");
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                product.CreatedAt = DateTime.Now;
+                product.UpdatedAt= DateTime.Now;
+                product.ProductId = Guid.NewGuid();
+                _context.Add(product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Re-populate ViewBag.CategoryId if validation fails
+            var categories = _context.categories.ToList();
+            ViewBag.CategoryId = new SelectList(categories, "CategoryId", "Name", product.CategoryId);
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 
             return View(product);
         }
 
+<<<<<<< HEAD
         // POST: Product/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -201,6 +275,53 @@ namespace WebThoiTrang.Controllers
 
                     
                     }
+=======
+        [HttpGet]
+        public IActionResult CreateProduct()
+        {
+            var categories = _context.categories.ToList();
+            ViewBag.CategoryId = new SelectList(categories, "CategoryId", "Name");
+            return View();
+        }
+
+
+
+
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            ViewData["CategoryId"] = new SelectList(_context.categories, "CategoryId", "Name", product.CategoryId);
+            return View(product);
+        }
+
+        // POST: Products/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("ProductId,Name,Description,Price,Stock,CategoryId,CreatedAt,UpdatedAt")] Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ProductExists(product.ProductId))
@@ -212,6 +333,7 @@ namespace WebThoiTrang.Controllers
                         throw;
                     }
                 }
+<<<<<<< HEAD
                 return RedirectToAction("ProductAdmin");
             }
                 // Tìm category từ database dựa trên CategoryId của product
@@ -244,6 +366,16 @@ namespace WebThoiTrang.Controllers
         }
         // GET: Products/Delete/5
         public async Task<IActionResult> ProductDelete(Guid id)
+=======
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["CategoryId"] = new SelectList(_context.categories, "CategoryId", "Name", product.CategoryId);
+            return View(product);
+        }
+
+        // GET: Products/Delete/5
+        public async Task<IActionResult> Delete(Guid id)
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         {
             if (id == null)
             {
@@ -262,14 +394,22 @@ namespace WebThoiTrang.Controllers
         }
 
         // POST: Products/Delete/5
+<<<<<<< HEAD
         [HttpPost, ActionName("ProductDelete")]
+=======
+        [HttpPost, ActionName("Delete")]
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var product = await _context.products.FindAsync(id);
             _context.products.Remove(product);
             await _context.SaveChangesAsync();
+<<<<<<< HEAD
             return RedirectToAction("ProductAdmin");
+=======
+            return RedirectToAction(nameof(Index));
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         }
 
         private bool ProductExists(Guid id)
@@ -411,7 +551,11 @@ namespace WebThoiTrang.Controllers
             }
 
             // POST: Categories/Delete/5
+<<<<<<< HEAD
             [HttpPost, ActionName("DeleteCategory")]
+=======
+            [HttpPost, ActionName("Delete")]
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
             [ValidateAntiForgeryToken]
             public async Task<IActionResult> DeleteCateConfirmed(Guid id)
             {
@@ -558,6 +702,7 @@ namespace WebThoiTrang.Controllers
             }
         //////////////////////////
         //////////////////////////
+<<<<<<< HEAD
         ///
           // GET: Users
         public async Task<IActionResult> Index()
@@ -588,6 +733,8 @@ namespace WebThoiTrang.Controllers
         // GET: Users/Create
      
     
+=======
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
     }
 }
 

@@ -45,6 +45,7 @@
         <div class="container-fluid">
 
 
+<<<<<<< HEAD
 <form asp-action="CreateProduct" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
@@ -89,6 +90,71 @@
     </div>
 </form>
 
+=======
+        
+<h1>ProductAdminCreate</h1>
+            @Html.ValidationSummary(true)
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+                    @using (Html.BeginForm("CreateProduct", "Admin", FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form-horizontal">
+                            <h4>Product</h4>
+                            <hr />
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.img, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.img, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.img, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Stock, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Stock, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Stock, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CategoryId, htmlAttributes: new { @class = "control-label" })
+                                @Html.DropDownListFor(model => model.CategoryId, ViewBag.CategoryId as SelectList, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    }
+
+
+            
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->

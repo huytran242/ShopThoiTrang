@@ -1,15 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebThoiTrang.Models;
 using Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+=======
+using System.Diagnostics;
+using WebThoiTrang.Models;
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 
 namespace WebThoiTrang.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+<<<<<<< HEAD
         private readonly DbContextShop _context;
         public HomeController(ILogger<HomeController> logger, DbContextShop context)
         {
@@ -72,10 +78,20 @@ namespace WebThoiTrang.Controllers
             return View(product);
         }
         public IActionResult UserCreate()
+=======
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
+        public IActionResult IndexShop()
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         {
             return View();
         }
 
+<<<<<<< HEAD
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -101,11 +117,19 @@ namespace WebThoiTrang.Controllers
         }
 
 
+=======
+        public IActionResult Details()
+        {
+            return View();
+        }
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+<<<<<<< HEAD
         // GET: Users/Edit/5
         public async Task<IActionResult> UserEdit(int? id)
         {
@@ -197,5 +221,7 @@ namespace WebThoiTrang.Controllers
             return (_context.users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
       
+=======
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
     }
 }

@@ -72,6 +72,7 @@
                                         @Html.DisplayNameFor(model => model.img)
                                     </dt>
                                     <dd class="col-sm-10">
+<<<<<<< HEAD
                                         @if (!string.IsNullOrEmpty(Model.img))
                                         {
                                             <img src="@Model.img" alt="Product Image" style="max-width: 200px;" />
@@ -80,6 +81,9 @@
                                         {
                                             <span>No image available</span>
                                         }
+=======
+                                        @Html.DisplayFor(model => model.img)
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
                                     </dd>
                                     <dt class="col-sm-2">
                                         @Html.DisplayNameFor(model => model.CreatedAt)

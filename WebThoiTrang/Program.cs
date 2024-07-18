@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
@@ -7,17 +8,28 @@ using Microsoft.AspNetCore.Identity;
 using WebThoiTrang.Models;
 
 
+=======
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore;
+using WebThoiTrang.Models;
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddDbContext<DbContextShop>(options => { options.UseSqlServer(builder.Configuration.GetConnectionString("MyCS")); });
+<<<<<<< HEAD
 builder.Services.AddHttpContextAccessor();
+=======
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 builder.Services.AddControllersWithViews();
 builder.Services.AddAntiforgery(options =>
 {
     options.Cookie.Name = ".AspNetCore.Antiforgery.YourApp";
 });
+<<<<<<< HEAD
 
 builder.Services.Configure<FormOptions>(options =>
 {
@@ -30,6 +42,8 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Đánh dấu cookie session là thiết yếu để tuân thủ GDPR
 });
 
+=======
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 builder.Services.AddLogging();
 var app = builder.Build();
 
@@ -45,12 +59,21 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+<<<<<<< HEAD
 app.UseSession();
+=======
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
+<<<<<<< HEAD
     //pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
 pattern: "{controller=Home}/{action=Bills}/{id?}");
 //pattern: "{controller=Login}/{action=IndexLogin}/{id?}");
+=======
+    pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
 app.Run();
