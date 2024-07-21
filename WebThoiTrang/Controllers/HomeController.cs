@@ -4,18 +4,31 @@ using System.Diagnostics;
 using WebThoiTrang.Models;
 using Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using WebThoiTrang.Service;
+using Newtonsoft.Json;
 
 namespace WebThoiTrang.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly CartService _cartService;
         private readonly ILogger<HomeController> _logger;
         private readonly DbContextShop _context;
-        public HomeController(ILogger<HomeController> logger, DbContextShop context)
+        public HomeController(ILogger<HomeController> logger, DbContextShop context, CartService cartService)
         {
+            _cartService = cartService;
             _logger = logger;
             _context = context;
+
         }
+        public ActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page or home page
+            return RedirectToAction("IndexShop", "Home");
+        }
+       
 
         public async Task<IActionResult> IndexShop()
         {
@@ -27,27 +40,7 @@ namespace WebThoiTrang.Controllers
             ViewData["Username"] = username;
             return View(products);
         }
-        public async Task<IActionResult> Bills(Guid id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-    
-
-        public async Task<IActionResult> Details(Guid id)
+       public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
@@ -190,6 +183,138 @@ namespace WebThoiTrang.Controllers
         {
             return (_context.users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
-      
+
+        // Action để hiển thị danh sách OrderItem
+        // Thêm sản phẩm vào giỏ hàng
+
+
+        public IActionResult AddToCart(Guid productId)
+        {
+            try
+            {
+                // Tìm sản phẩm theo productId và chuyển đổi thành ProductDto
+                var product = _context.products
+                    .Include(p => p.Category) // Bao gồm Category nhưng không sử dụng trong DTO
+                    .Where(p => p.ProductId == productId)
+                    .Select(p => new ProductDto
+                    {
+                        ProductId = p.ProductId,
+                        Name = p.Name,
+                        Price = p.Price,
+                        img = p.img,
+                        CategoryName = p.Category.Name // Chỉ lấy tên Category
+                    })
+                    .FirstOrDefault();
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                // Lấy giỏ hàng hiện tại
+                var cartItems = _cartService.GetCart();
+                var existingItem = cartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+                if (existingItem != null)
+                {
+                    // Nếu sản phẩm đã tồn tại, chỉ cập nhật số lượng
+                    existingItem.Quantity += 1; // Hoặc cập nhật số lượng từ request
+                    _cartService.UpdateCart(new OrderItem
+                    {
+                        ProductId = productId,
+                        Quantity = existingItem.Quantity,
+                        Price = product.Price
+                    });
+                    TempData["Message"] = "Sản phẩm đã tồn tại trong giỏ hàng. Số lượng đã được cập nhật.";
+                }
+                else
+                {
+                    // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ hàng
+                    var orderItem = new OrderItem
+                    {
+                        ProductId = productId,
+                        Quantity = 1, // Hoặc lấy từ request
+                        Price = product.Price
+                    };
+                    _cartService.AddToCart(orderItem);
+                    TempData["Message"] = "Sản phẩm đã được thêm vào giỏ hàng.";
+                }
+
+                // Lưu cartItems vào TempData
+                TempData["CartItems"] = Newtonsoft.Json.JsonConvert.SerializeObject(
+                    cartItems.Select(ci => new ProductDto
+                    {
+                        ProductId = ci.ProductId,
+                        Name = ci.Product.Name,
+                        Price = ci.Price,
+                        img = ci.Product.img,
+                        CategoryName = ci.Product.Category.Name,
+                        Quantity = ci.Quantity
+                    }).ToList(),
+                    new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
+
+                return RedirectToAction("CartIndex");
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi và trả về trang lỗi
+                _logger.LogError(ex, "Error adding product to cart");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        public IActionResult CartIndex()
+        {
+            try
+            {
+                var cartItems = _cartService.GetCart();
+                var cartDto = new CartDto
+                {
+                    Products = cartItems.Select(ci => new ProductDto
+                    {
+                        ProductId = ci.Product.ProductId,
+                        Name = ci.Product.Name,
+                        Price = ci.Product.Price,
+                        img = ci.Product.img,
+                        CategoryName = ci.Product.Category.Name,
+                        Quantity = ci.Quantity
+                    }).ToList()
+                };
+
+                return View(cartDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving cart items");
+                return StatusCode(500, "Internal server error");
+            }
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateCart([FromBody] OrderItem updatedItem)
+        {
+            try
+            {
+                // Cập nhật giỏ hàng
+                _cartService.UpdateCart(updatedItem);
+
+                // Trả về phản hồi thành công
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating cart");
+                // Trả về phản hồi lỗi
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+
     }
 }
+

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebThoiTrang.Models;
 
@@ -11,9 +12,11 @@ using WebThoiTrang.Models;
 namespace WebThoiTrang.Migrations
 {
     [DbContext(typeof(DbContextShop))]
-    partial class DbContextShopModelSnapshot : ModelSnapshot
+    [Migration("20240719074735_v")]
+    partial class v
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

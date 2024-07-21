@@ -16,7 +16,7 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-    <link href="" rel="stylesheet" />
+
     <!-- Vendor CSS Files -->
     <link href="~/aos/aos.css rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
     
     <!-- Template Main CSS File -->
     <link href="~/css/style.css" rel="stylesheet">
-
+    <link href="~/css/StyleSheetCart.css" rel="stylesheet">
     <!-- =======================================================
     * Template Name: Knight
     * Template URL: https://bootstrapmade.com/knight-free-bootstrap-theme/
@@ -50,9 +50,9 @@
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link scrollto active" asp-action="IndexShop" >Home</a></li>
-                    <li><a class="nav-link scrollto" asp-action="Bills">Hóa đơn đã mua</a></li>
+                    <li><a class="nav-link scrollto" asp-action="CartIndex">Giỏ hàng</a></li>
                     <li><a class="nav-link scrollto" href="#services">Services</a></li>
-                    <li><a class="nav-link scrollto " href="#portfolio">Portfolio</a></li>
+                    <li><a class="nav-link scrollto " asp-action="IndexShop">Portfolio</a></li>
                     <li><a class="nav-link scrollto" href="#team">Team</a></li>
 
                     <li class="dropdown">
@@ -67,7 +67,7 @@
                             }
                             <ul>
 
-                                <li><a asp-action="Account">Chỉnh sửa</a></li>
+                                <li><a asp-action="Logout" asp-controller="Home">Đăng xuất</a></li>
                                 <li><a asp-action="UserCreate">Đăng kí</a></li>
                                 <li><a asp-action="IndexLogin" asp-controller="Login">Đăng nhập</a></li>
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebThoiTrang.Migrations
 {
     /// <inheritdoc />
-    public partial class c : Migration
+    public partial class v : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,7 +40,7 @@ namespace WebThoiTrang.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "users",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -51,7 +51,7 @@ namespace WebThoiTrang.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.UserId);
+                    table.PrimaryKey("PK_users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,9 +93,9 @@ namespace WebThoiTrang.Migrations
                 {
                     table.PrimaryKey("PK_orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_orders_User_UserId",
+                        name: "FK_orders_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -117,16 +117,16 @@ namespace WebThoiTrang.Migrations
                 {
                     table.PrimaryKey("PK_reviews", x => x.ReviewId);
                     table.ForeignKey(
-                        name: "FK_reviews_User_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_reviews_products_ProductId1",
                         column: x => x.ProductId1,
                         principalTable: "products",
                         principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_reviews_users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -135,10 +135,8 @@ namespace WebThoiTrang.Migrations
                 columns: table => new
                 {
                     OrderItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    OrderId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    ProductId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -146,28 +144,28 @@ namespace WebThoiTrang.Migrations
                 {
                     table.PrimaryKey("PK_orderItems", x => x.OrderItemId);
                     table.ForeignKey(
-                        name: "FK_orderItems_orders_OrderId1",
-                        column: x => x.OrderId1,
+                        name: "FK_orderItems_orders_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_orderItems_products_ProductId1",
-                        column: x => x.ProductId1,
+                        name: "FK_orderItems_products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_orderItems_OrderId1",
+                name: "IX_orderItems_OrderId",
                 table: "orderItems",
-                column: "OrderId1");
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_orderItems_ProductId1",
+                name: "IX_orderItems_ProductId",
                 table: "orderItems",
-                column: "ProductId1");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_UserId",
@@ -209,7 +207,7 @@ namespace WebThoiTrang.Migrations
                 name: "products");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "categories");

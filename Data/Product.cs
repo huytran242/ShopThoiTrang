@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Data
@@ -28,13 +29,15 @@ namespace Data
 
         [Required(ErrorMessage = "Category is required.")]
         public Guid CategoryId { get; set; }
-        
+        [JsonIgnore] // Loại bỏ thuộc tính Category khỏi việc serialize
         public Category Category { get; set; }
         [Required(ErrorMessage = "Product Img is required.")]
         public string img { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        [JsonIgnore]
+        public ICollection<OrderItem> OrderItems { get; set; } 
     }
 
 }

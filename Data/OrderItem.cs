@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Text.Json.Serialization;
 namespace Data
 {
     public class OrderItem
@@ -12,11 +12,12 @@ namespace Data
         public Guid OrderItemId { get; set; }
 
         [Required(ErrorMessage = "Order is required.")]
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public Order Order { get; set; }
 
         [Required(ErrorMessage = "Product is required.")]
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
+        [JsonIgnore]
         public Product Product { get; set; }
 
         [Required(ErrorMessage = "Quantity is required.")]

@@ -23,7 +23,14 @@ namespace WebThoiTrang.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        // GET: Products
+        public IActionResult Logout()
+        {
+            // Clear the session
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page or home page
+            return RedirectToAction("IndexLogin", "Login");
+        }
         public IActionResult IndexAdmin()
         {
             string username = HttpContext.Session.GetString("Username");
@@ -423,137 +430,9 @@ namespace WebThoiTrang.Controllers
         /// ////////////////////
         /// </summary>
         /// <returns></returns>
-            // GET: Admins
-            public async Task<IActionResult> IndexAd()
-            {
-                return View(await _context.admins.ToListAsync());
-            }
-
-            // GET: Admins/Details/5
-            public async Task<IActionResult> DetailsAd(Guid id)
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var admin = await _context.admins
-                    .FirstOrDefaultAsync(m => m.AdminId == id);
-                if (admin == null)
-                {
-                    return NotFound();
-                }
-
-                return View(admin);
-            }
-
-            // GET: Admins/Create
-            public IActionResult CreateAd()
-            {
-                return View();
-            }
-
-            // POST: Admins/Create
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> CreateAd([Bind("AdminId,Username,Password,Email,CreatedAt")] Admin admin)
-            {
-                if (ModelState.IsValid)
-                {
-                    _context.Add(admin);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("IndexCategory");
-                }
-                return View(admin);
-            }
-
-            // GET: Admins/Edit/5
-            public async Task<IActionResult> EditAd(int? id)
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var admin = await _context.admins.FindAsync(id);
-                if (admin == null)
-                {
-                    return NotFound();
-                }
-                return View(admin);
-            }
-
-            // POST: Admins/Edit/5
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> EditAd(Guid id, [Bind("AdminId,Username,Password,Email,CreatedAt")] Admin admin)
-            {
-                if (id != admin.AdminId)
-                {
-                    return NotFound();
-                }
-
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        _context.Update(admin);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!AdminExists(admin.AdminId))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(admin);
-            }
-
-            // GET: Admins/Delete/5
-            public async Task<IActionResult> DeleteAd(Guid id)
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var admin = await _context.admins
-                    .FirstOrDefaultAsync(m => m.AdminId == id);
-                if (admin == null)
-                {
-                    return NotFound();
-                }
-
-                return View(admin);
-            }
-
-            // POST: Admins/Delete/5
-            [HttpPost, ActionName("Delete")]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> DeleteAdminConfirmed(Guid id)
-            {
-                var admin = await _context.admins.FindAsync(id);
-                _context.admins.Remove(admin);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            private bool AdminExists(Guid id)
-            {
-                return _context.admins.Any(e => e.AdminId == id);
-            }
-        //////////////////////////
-        //////////////////////////
-        ///
+           
           // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> UserList()
         {
             return _context.users != null ?
                         View(await _context.users.ToListAsync()) :
@@ -561,7 +440,7 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> UserDetails(Guid id)
         {
             if (id == null || _context.users == null)
             {

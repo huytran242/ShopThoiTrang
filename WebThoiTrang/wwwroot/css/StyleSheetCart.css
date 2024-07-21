@@ -1,0 +1,69 @@
+﻿/* Đảm bảo không gian đủ cho các phần tử */
+.card-registration {
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-registration-2 {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Điều chỉnh cho chiều cao của phần tiêu đề và tổng quan */
+.h-custom {
+    height: auto;
+    min-height: 100vh; /* Đảm bảo chiều cao của phần này là tối thiểu 100% viewport */
+}
+
+/* Điều chỉnh cho các phần tử và font-size trong dropdown */
+.select-input.form-control {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .75em;
+    padding-right: .75em;
+}
+
+.select-arrow {
+    top: 13px;
+}
+
+/* Điều chỉnh khoảng cách và căn chỉnh các phần tử */
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.mx-2 {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.text-end {
+    text-align: end;
+}
+
+/* Đảm bảo các nút và các phần tử form có không gian đúng */
+.btn {
+    margin-top: 10px;
+}
+
+/* Điều chỉnh chiều cao của các phần tử trong phần tổng quan */
+.bg-body-tertiary {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+/* Thay đổi màu sắc nền và khoảng cách cho các phần tử chính */
+.container {
+    padding: 20px;
+}
+
+/* Đảm bảo rằng các phần tử không bị che khuất và có không gian đủ */
+@media (min-width: 1025px) {
+    .h-custom {
+        height: auto;
+    }
+}

@@ -1,0 +1,228 @@
+﻿@model WebThoiTrang.Models.CartDto
+
+@{
+    ViewData["Title"] = "CartIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<body>
+    <main id="main" data-aos="fade-up">
+        <section id="hero">
+            <div class="hero-container">
+                <a asp-action="IndexShop" class="hero-logo" data-aos="zoom-in"><img src="/img/hero-logo.png" alt=""></a>
+            </div>
+        </section><!-- End Hero -->
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Cart Details</h2>
+                    <ol>
+                        <li><a asp-action="IndexShop">Home</a></li>
+                        <li>Cart Details</li>
+                    </ol>
+                </div>
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Cart Details Section ======= -->
+        <section class="h-100 h-custom" style="background-color: #f8f9fa;">
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-start h-100">
+                    <!-- Cart Items -->
+                    <div class="col-lg-8">
+                        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                            <div class="card-body p-0">
+                                <div class="row g-0">
+                                    <div class="col-12 p-5">
+                                        <div class="d-flex justify-content-between align-items-center mb-5">
+                                            <h1 class="fw-bold mb-0">Shopping Cart</h1>
+                                            <h6 class="mb-0 text-muted">@Model.Products.Count() items</h6>
+                                        </div>
+                                        <hr class="my-4">
+                                        @foreach (var item in Model.Products)
+                                        {
+                                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                    <img src="@item.img" class="img-fluid rounded-3" alt="@item.Name">
+                                                </div>
+                                                <div class="col-md-4 col-lg-4 col-xl-4">
+                                                    <h6 class="text-muted">@item.CategoryName</h6>
+                                                    <h6 class="mb-0">@item.Name</h6>
+                                                </div>
+                                                <div class="col-md-3 col-lg-3 col-xl-3 d-flex align-items-center">
+                                                    <button onclick="updateQuantity('@item.ProductId', -1)">-</button>
+                                                    <input id="quantity-@item.ProductId" min="0" name="quantity" value="@item.Quantity" type="number" class="form-control form-control-sm mx-2" readonly />
+                                                    <button onclick="updateQuantity('@item.ProductId', 1)">+</button>
+
+                                                </div>
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                    <h6 id="price-@item.ProductId" class="mb-0 text-end" data-price="@item.Price">$@(@item.Price * @item.Quantity)</h6>
+                                                </div>
+                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                                    <a href="@Url.Action("RemoveFromCart", new { id = item.ProductId })" class="text-muted">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <hr class="my-4">
+                                        }
+
+                                        <div class="pt-5 d-flex justify-content-between">
+                                            <h6 class="mb-0">
+                                                <a href="@Url.Action("IndexShop", "Home")" class="text-body">
+                                                    <i class="fas fa-long-arrow-alt-left me-2"></i>Back to shop
+                                                </a>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="col-lg-4">
+                        <div class="card p-4" style="border-radius: 15px; background-color: #ffffff;">
+                            <h3 class="fw-bold mb-5 mt-2">Summary</h3>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="text-uppercase">Items (@Model.Products.Count())</h5>
+                                <h5 id="total-price-summary">@Model.Products.Sum(x => x.Price * x.Quantity).ToString("C")</h5>
+                            </div>
+                            <h5 class="text-uppercase mb-3">Shipping</h5>
+                            <div class="mb-4 pb-2">
+                                <select class="form-select">
+                                    <option value="1">Standard Delivery - €5.00</option>
+                                    <option value="2">Express Delivery - €10.00</option>
+                                </select>
+                            </div>
+                            <h5 class="text-uppercase mb-3">Coupon Code</h5>
+                            <div class="mb-5">
+                                <div class="form-outline">
+                                    <input type="text" id="couponCode" class="form-control form-control-lg" />
+                                    <label class="form-label" for="couponCode">Enter your code</label>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-5">
+                                <h5 class="text-uppercase">Total Price</h5>
+                                <h5 id="final-total-price">@Model.Products.Sum(x => x.Price * x.Quantity).ToString("C")</h5>
+                            </div>
+                            <button type="button" class="btn btn-dark btn-block btn-lg">
+                                Proceed to Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+    <!-- ======= Footer ======= -->
+    <footer id="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <a href="#header" class="scrollto footer-logo"><img src="assets/img/hero-logo.png" alt=""></a>
+                        <h3>Knight</h3>
+                        <p>Et aut eum quis fuga eos sunt ipsa nihil. Labore corporis magni eligendi fuga maxime saepe commodi placeat.</p>
+                    </div>
+                </div>
+
+                <div class="row footer-newsletter justify-content-center">
+                    <div class="col-lg-6">
+                        <form action="" method="post">
+                            <input type="email" name="email" placeholder="Enter your Email"><input type="submit" value="Subscribe">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                    <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                    <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                    <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom clearfix">
+            <div class="copyright">
+                &copy; Copyright <strong><span>Knight</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            </div>
+        </div>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- JavaScript -->
+    <script>
+        function updateQuantity(productId, change) {
+            var quantityInput = document.getElementById('quantity-' + productId);
+            var currentQuantity = parseInt(quantityInput.value, 10);
+            var newQuantity = currentQuantity + change;
+
+            if (newQuantity < 1) newQuantity = 1; // Prevent zero or negative quantities
+            quantityInput.value = newQuantity;
+
+            // Get price per item from data attribute
+            var pricePerItem = parseFloat(document.getElementById('price-' + productId).dataset.price);
+            if (isNaN(pricePerItem)) {
+                console.error('Invalid price per item:', document.getElementById('price-' + productId).dataset.price);
+                return;
+            }
+
+            // Calculate new total price for this item
+            var newPrice = (pricePerItem * newQuantity).toFixed(2); // Calculate total price
+            var formattedPrice = Number(newPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); // Format price for display
+
+            var totalPriceElement = document.getElementById('price-' + productId);
+            totalPriceElement.textContent = formattedPrice;
+
+            // Call server to update cart
+            updateCart(productId, newQuantity);
+
+            // Update total price
+            updateTotalPrice();
+        }
+
+        function updateCart(productId, quantity) {
+            fetch('/Cart/UpdateCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ productId: productId, quantity: quantity })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Failed to update cart.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            var priceElements = document.querySelectorAll('[id^="price-"]');
+            priceElements.forEach(function (priceElement) {
+                var priceText = priceElement.textContent.replace(/[^0-9.-]+/g, ''); // Remove currency symbol and other non-numeric characters
+                var priceValue = parseFloat(priceText);
+                if (!isNaN(priceValue)) {
+                    totalPrice += priceValue;
+                }
+            });
+
+            document.getElementById('final-total-price').textContent = totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            document.getElementById('total-price-summary').textContent = document.getElementById('final-total-price').textContent;
+        }
+
+
+    </script>
+</body>

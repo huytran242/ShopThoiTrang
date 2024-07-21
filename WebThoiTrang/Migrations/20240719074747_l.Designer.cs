@@ -12,8 +12,8 @@ using WebThoiTrang.Models;
 namespace WebThoiTrang.Migrations
 {
     [DbContext(typeof(DbContextShop))]
-    [Migration("20240709050034_c")]
-    partial class c
+    [Migration("20240719074747_l")]
+    partial class l
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,19 +108,13 @@ namespace WebThoiTrang.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("OrderId1")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProductId1")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -128,9 +122,9 @@ namespace WebThoiTrang.Migrations
 
                     b.HasKey("OrderItemId");
 
-                    b.HasIndex("OrderId1");
+                    b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId1");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("orderItems");
                 });
@@ -241,7 +235,7 @@ namespace WebThoiTrang.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("User");
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("Data.Order", b =>
@@ -259,13 +253,13 @@ namespace WebThoiTrang.Migrations
                 {
                     b.HasOne("Data.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId1")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Data.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId1")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -310,6 +304,11 @@ namespace WebThoiTrang.Migrations
                 });
 
             modelBuilder.Entity("Data.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Data.Product", b =>
                 {
                     b.Navigation("OrderItems");
                 });
