@@ -312,6 +312,33 @@ namespace WebThoiTrang.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public IActionResult RemoveFromCart(Guid productId)
+        {
+            var cart = _cartService.GetCart();
+            var item = cart.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                cart.Remove(item);
+                _cartService.SaveCart(cart);
+            }
+            return RedirectToAction("CartIndex");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateQuantity(Guid productId, int quantity)
+        {
+            var cart = _cartService.GetCart();
+            var item = cart.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                item.Quantity = quantity;
+                _cartService.SaveCart(cart);
+            }
+            return RedirectToAction("CartIndex");
+        }
+
+
 
 
 

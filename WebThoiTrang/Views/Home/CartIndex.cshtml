@@ -59,10 +59,13 @@
                                                     <h6 id="price-@item.ProductId" class="mb-0 text-end" data-price="@item.Price">$@(@item.Price * @item.Quantity)</h6>
                                                 </div>
                                                 <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                                    <a href="@Url.Action("RemoveFromCart", new { id = item.ProductId })" class="text-muted">
-                                                        <i class="fas fa-times"></i>
-                                                    </a>
+                                                    <form asp-action="RemoveFromCart" method="post" style="display:inline;">
+                                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash-fill"></i></button>
+                                                    </form>
+
                                                 </div>
+                                               
                                             </div>
                                             <hr class="my-4">
                                         }
@@ -222,7 +225,7 @@
             document.getElementById('final-total-price').textContent = totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
             document.getElementById('total-price-summary').textContent = document.getElementById('final-total-price').textContent;
         }
-
+       
 
     </script>
 </body>

@@ -52,14 +52,14 @@
                     <li><a class="nav-link scrollto active" asp-action="IndexShop" >Home</a></li>
                     <li><a class="nav-link scrollto" asp-action="CartIndex">Giỏ hàng</a></li>
                     <li><a class="nav-link scrollto" href="#services">Services</a></li>
-                    <li><a class="nav-link scrollto " asp-action="IndexShop">Portfolio</a></li>
+                    <li><a class="nav-link scrollto "asp-action="IndexShop">Portfolio</a></li>
                     <li><a class="nav-link scrollto" href="#team">Team</a></li>
 
                     <li class="dropdown">
                         <a href="#">
                             @if (ViewData["Username"] != null)
                             {
-                                <span class="nav-text"> @ViewData["Username"]</span>
+                                <span class="nav-text">@ViewData["Username"]</span>
                             }
                             else
                             {
