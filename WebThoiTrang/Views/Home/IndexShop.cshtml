@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿@model IEnumerable<Data.Product>
 @{
+=======
+﻿@{
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <body>
@@ -9,7 +13,11 @@
         <div class="hero-container">
             <a href="index.html" class="hero-logo" data-aos="zoom-in"><img src="/img/hero-logo.png" alt=""></a>
             <h1 data-aos="zoom-in">Welcome To Knight Studios</h1>
+<<<<<<< HEAD
             <h1>Welcome, @ViewData["Username"]!</h1>
+=======
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         </div>
     </section><!-- End Hero -->
     <main id="main">
@@ -27,15 +35,22 @@
                     <div class="col-lg-12 d-flex justify-content-center">
                         <ul id="portfolio-flters">
                             <li data-filter="*" class="filter-active">All</li>
+<<<<<<< HEAD
                             @foreach (var category in Model.Select(p => p.Category).Distinct())
                             {
                                 <li data-filter=".filter-@category.Name.ToLower()">@category.Name</li>
                             }
+=======
+                            <li data-filter=".filter-app">App</li>
+                            <li data-filter=".filter-card">Card</li>
+                            <li data-filter=".filter-web">Web</li>
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
                         </ul>
                     </div>
                 </div>
 
                 <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
+<<<<<<< HEAD
                     @foreach (var product in Model)
                     {
                         <div class="col-lg-4 col-md-6 portfolio-item filter-@product.Category.Name.ToLower()">
@@ -48,9 +63,13 @@
                                         @product.Price.ToString("C")
                                     </p>
                                     <div class="portfolio-links">
+<<<<<<< HEAD
                                         <form asp-action="AddToCart" asp-route-productId="@product.ProductId">
                                             <button type="submit" class="btn btn-primary"><i class="bi bi-cart-plus"></i></button>
                                         </form>
+=======
+                                        <a asp-action="Bills"  class="portfolio-lightbox"><i class="bx bx-plus"></i></a>
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
                                         <a asp-action="Details" asp-route-id="@product.ProductId" title="More Details"><i class="bx bx-link"></i></a>
                                     </div>
                                 </div>
@@ -58,6 +77,129 @@
                         </div>
                     }
                 </div>
+<<<<<<< HEAD
+=======
+             
+=======
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-2.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Web 3</h4>
+                                <p>Web</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-2.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Web 3"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-3.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>App 2</h4>
+                                <p>App</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-3.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="App 2"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-4.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Card 2</h4>
+                                <p>Card</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-4.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Card 2"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-5.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Web 2</h4>
+                                <p>Web</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-5.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Web 2"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-6.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>App 3</h4>
+                                <p>App</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-6.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="App 3"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-7.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Card 1</h4>
+                                <p>Card</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-7.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Card 1"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-8.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Card 3</h4>
+                                <p>Card</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-8.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Card 3"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                        <div class="portfolio-wrap">
+                            <img src="/img/portfolio/portfolio-9.jpg" class="img-fluid" alt="">
+                            <div class="portfolio-info">
+                                <h4>Web 3</h4>
+                                <p>Web</p>
+                                <div class="portfolio-links">
+                                    <a href="/img/portfolio/portfolio-9.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Web 3"><i class="bx bx-plus"></i></a>
+                                    <a asp-action="Details" title="More Details"><i class="bx bx-link"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
+
+                </div>
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
 
             </div>
         </section><!-- End Portfolio Section -->

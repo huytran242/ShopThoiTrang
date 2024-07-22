@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebThoiTrang.Models;
 
@@ -11,9 +12,11 @@ using WebThoiTrang.Models;
 namespace WebThoiTrang.Migrations
 {
     [DbContext(typeof(DbContextShop))]
-    partial class DbContextShopModelSnapshot : ModelSnapshot
+    [Migration("20240716094146_u")]
+    partial class u
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,13 +108,19 @@ namespace WebThoiTrang.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderId")
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("OrderId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -119,9 +128,9 @@ namespace WebThoiTrang.Migrations
 
                     b.HasKey("OrderItemId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrderId1");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId1");
 
                     b.ToTable("orderItems");
                 });
@@ -232,15 +241,7 @@ namespace WebThoiTrang.Migrations
 
                     b.HasKey("UserId");
 
-<<<<<<< HEAD
                     b.ToTable("users");
-=======
-<<<<<<< HEAD
-                    b.ToTable("User");
-=======
-                    b.ToTable("users");
->>>>>>> aeefa36c15e904858c8700698f6022722429480b
->>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
                 });
 
             modelBuilder.Entity("Data.Order", b =>
@@ -258,13 +259,13 @@ namespace WebThoiTrang.Migrations
                 {
                     b.HasOne("Data.Order", "Order")
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
+                        .HasForeignKey("OrderId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Data.Product", "Product")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
+                        .WithMany()
+                        .HasForeignKey("ProductId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -309,11 +310,6 @@ namespace WebThoiTrang.Migrations
                 });
 
             modelBuilder.Entity("Data.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Data.Product", b =>
                 {
                     b.Navigation("OrderItems");
                 });

@@ -98,10 +98,14 @@
                             @Html.DisplayFor(modelItem => item.CategoryId)
                         </td>
                         <td>
+<<<<<<< HEAD
                             @if (!string.IsNullOrEmpty(item.img))
                             {
                                 <img src="@item.img"  style="width: 100px; height: auto;" />
                             }
+=======
+                            @Html.DisplayFor(modelItem => item.img)
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedAt)
@@ -110,9 +114,15 @@
                             @Html.DisplayFor(modelItem => item.UpdatedAt)
                         </td>
                         <td>
+<<<<<<< HEAD
                             <a asp-action="EditProduct1" asp-route-id="@item.ProductId">Edit</a> |
                             <a asp-action="ProductDetails" asp-route-id="@item.ProductId">Details</a> |
                             <a asp-action="ProductDelete" asp-route-id="@item.ProductId">Delete</a>
+=======
+                            <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
                         </td>
                     </tr>
                 }

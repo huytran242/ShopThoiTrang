@@ -1,11 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebThoiTrang.Models;
 using Data;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+<<<<<<< HEAD
 using WebThoiTrang.Service;
 using Newtonsoft.Json;
+=======
+=======
+using System.Diagnostics;
+using WebThoiTrang.Models;
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
 
 namespace WebThoiTrang.Controllers
 {
@@ -13,6 +21,7 @@ namespace WebThoiTrang.Controllers
     {
         private readonly CartService _cartService;
         private readonly ILogger<HomeController> _logger;
+<<<<<<< HEAD
         private readonly DbContextShop _context;
         public HomeController(ILogger<HomeController> logger, DbContextShop context, CartService cartService)
         {
@@ -24,12 +33,18 @@ namespace WebThoiTrang.Controllers
         public ActionResult Logout()
         {
             HttpContext.Session.Clear();
+<<<<<<< HEAD
 
             // Redirect to the login page or home page
             return RedirectToAction("IndexShop", "Home");
         }
        
+=======
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
 
+            // Redirect to the login page or home page
+            return RedirectToAction("IndexShop", "Home");
+        }
         public async Task<IActionResult> IndexShop()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -40,7 +55,31 @@ namespace WebThoiTrang.Controllers
             ViewData["Username"] = username;
             return View(products);
         }
+<<<<<<< HEAD
        public async Task<IActionResult> Details(Guid id)
+=======
+        public async Task<IActionResult> Bills(Guid id)
+        {
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //var product = await _context.products
+            //    .Include(p => p.Category)
+            //    .FirstOrDefaultAsync(m => m.ProductId == id);
+
+            //if (product == null)
+            //{
+            //    return NotFound();
+            //}
+
+            return View();
+        }
+    
+
+        public async Task<IActionResult> Details(Guid id)
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
         {
             if (id == null)
             {
@@ -59,10 +98,20 @@ namespace WebThoiTrang.Controllers
             return View(product);
         }
         public IActionResult UserCreate()
+=======
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
+        public IActionResult IndexShop()
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         {
             return View();
         }
 
+<<<<<<< HEAD
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -88,11 +137,19 @@ namespace WebThoiTrang.Controllers
         }
 
 
+=======
+        public IActionResult Details()
+        {
+            return View();
+        }
+
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+<<<<<<< HEAD
         // GET: Users/Edit/5
         public async Task<IActionResult> UserEdit(int? id)
         {
@@ -183,6 +240,7 @@ namespace WebThoiTrang.Controllers
         {
             return (_context.users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
+<<<<<<< HEAD
 
         // Action để hiển thị danh sách OrderItem
         // Thêm sản phẩm vào giỏ hàng
@@ -342,6 +400,11 @@ namespace WebThoiTrang.Controllers
 
 
 
+=======
+      
+=======
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
+>>>>>>> 12813279156ade9b8e34d2558f46c27b0b4e6d79
     }
 }
 

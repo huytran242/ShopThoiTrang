@@ -13,6 +13,10 @@ namespace WebThoiTrang.Models
         public DbSet<Product> products { get; set; }
         public DbSet<OrderItem> orderItems { get; set; }    
         public DbSet<User> users { get; set; }  
+<<<<<<< HEAD
+=======
+        
+>>>>>>> aeefa36c15e904858c8700698f6022722429480b
         public DbSet<Review> reviews { get; set; }
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
