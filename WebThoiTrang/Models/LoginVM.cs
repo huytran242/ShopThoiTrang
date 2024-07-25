@@ -12,5 +12,7 @@ namespace WebThoiTrang.Models
 
         public string Password { get; set; }
 
+
+
     }
 }

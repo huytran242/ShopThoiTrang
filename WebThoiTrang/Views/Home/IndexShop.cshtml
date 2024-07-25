@@ -50,9 +50,23 @@
                                     <div class="portfolio-links">
                                         <form asp-action="AddToCart" asp-route-productId="@product.ProductId">
                                             <button type="submit" class="btn btn-primary"><i class="bi bi-cart-plus"></i></button>
+                                        
                                         </form>
                                         <a asp-action="Details" asp-route-id="@product.ProductId" title="More Details"><i class="bx bx-link"></i></a>
+                                    
                                     </div>
+
+                                    <p >
+
+                                        Số lượng còn lại      @product.Stock
+                                    </p>
+                                  @if (product.Stock ==0)
+                    {
+                                        <p >
+                                           Hết hàng
+                                        </p>
+                       
+                    }
                                 </div>
                             </div>
                         </div>

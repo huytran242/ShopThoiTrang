@@ -1,0 +1,52 @@
+﻿@model dynamic
+
+<div class="card">
+    <div class="card-body mx-4">
+        <div class="container">
+            <p class="my-5 mx-5" style="font-size: 30px;">Thank you for your purchase!</p>
+            <div class="row">
+                <ul class="list-unstyled">
+                    <li class="text-black"><strong>Username:</strong> @Model.UserName</li>
+         
+                    <li class="text-black mt-1"><strong>Date:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy")</li>
+                </ul>
+                <hr>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="row">
+                        <div class="col-md-2 col-lg-2 col-xl-2">
+                            <img src="@item.img" class="img-fluid rounded-3" alt="@item.Name">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-xl-4">
+                        
+                            <h6 class="mb-0">@item.Name</h6>
+                        </div>
+                        <div class="col-xl-2">
+                            <p class="float-end">
+                                @item.Price.ToString("C") <!-- Hiển thị giá sản phẩm -->
+                            </p>
+                        </div>
+                        <div class="col-xl-2">
+                            <p class="float-end">
+                                @item.Quantity <!-- Hiển thị số lượng sản phẩm -->
+                            </p>
+                        </div>
+                        <hr>
+                    </div>
+                }
+                <div class="row text-black">
+                    <div class="col-xl-12">
+                        <p class="float-end fw-bold">
+                            Total: @Model.TotalAmount.ToString("C") <!-- Hiển thị tổng tiền -->
+                        </p>
+                    </div>
+                    <hr style="border: 2px solid black;">
+                </div>
+                <div class="text-center" style="margin-top: 90px;">
+                    <a href="#" class="text-info"><u>View in browser</u></a>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ using WebThoiTrang.Models;
 
 namespace WebThoiTrang.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         private readonly ILogger<AdminController> _logger;
         private readonly DbContextShop _context;
@@ -31,17 +31,45 @@ namespace WebThoiTrang.Controllers
             // Redirect to the login page or home page
             return RedirectToAction("IndexLogin", "Login");
         }
-        public IActionResult IndexAdmin()
+        public async Task<IActionResult> IndexAdmin()
         {
             string username = HttpContext.Session.GetString("Username");
-
-            // Đưa giá trị Username vào ViewData để sử dụng trong view
             ViewData["Username"] = username;
 
+            var revenueSummary = await GetRevenueSummaryAsync(); // Hàm để lấy dữ liệu doanh thu
 
-            return View();
-          
+            if (revenueSummary == null)
+            {
+                return View("Error"); // Trả về view lỗi nếu dữ liệu bị null
+            }
+
+            // Lấy danh sách sản phẩm bán chạy nhất
+            var topSellingProducts = await _context.products
+                .Include(p => p.Category) // Bao gồm thông tin danh mục
+                .OrderByDescending(p => p.OrderItems.Sum(o => o.Quantity)) // Sắp xếp theo số lượng bán được
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    img = p.img,
+                    CategoryName = p.Category.Name,
+                    Quantity = p.OrderItems.Sum(o => o.Quantity),  // Tính số lượng bán được
+                    TotalRevenue = p.OrderItems.Sum(o => o.Quantity * o.Price)  // Tính số tiền đã bán được
+                })
+                .Take(10) // Lấy 10 sản phẩm bán chạy nhất
+                .ToListAsync();
+
+            // Tạo ViewModel
+            var viewModel = new AdminDashboardViewModel
+            {
+                RevenueSummary = revenueSummary,
+                TopSellingProducts = topSellingProducts
+            };
+
+            return View(viewModel);
         }
+
         public async Task<IActionResult> ProductAdmin()
         {
             var products = await _context.products.Include(p => p.Category).ToListAsync();
@@ -458,8 +486,48 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Users/Create
-     
-    
+
+        private async Task<RevenueSummaryViewModel> GetRevenueSummaryAsync()
+        {
+            var completedOrders = await _context.orders
+                .Where(o => o.Status == "Pending")
+                .ToListAsync();
+
+            if (completedOrders == null || !completedOrders.Any())
+            {
+                return null; // Trả về null nếu không có đơn hàng hoàn thành
+            }
+
+            var dailyRevenue = completedOrders
+                .Where(o => o.CreatedAt.Date == DateTime.UtcNow.Date)
+                .Sum(o => o.TotalAmount);
+
+            var weeklyRevenue = completedOrders
+                .Where(o => o.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+                .Sum(o => o.TotalAmount);
+
+            var monthlyRevenue = completedOrders
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new MonthlyRevenue
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    Revenue = g.Sum(o => o.TotalAmount)
+                }).ToList();
+
+            var totalRevenue = completedOrders.Sum(o => o.TotalAmount);
+
+            return new RevenueSummaryViewModel
+            {
+                DailyRevenue = dailyRevenue,
+                WeeklyRevenue = weeklyRevenue,
+                MonthlyRevenue = monthlyRevenue,
+                TotalRevenue = totalRevenue
+            };
+        }
+      
+
+
     }
 }
 
