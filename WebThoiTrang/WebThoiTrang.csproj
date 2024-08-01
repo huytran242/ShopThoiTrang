@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Admin\OrdersListAd.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Admin\OrdersListAd.cshtml" />
     <None Include="wwwroot\css\icons\.DS_Store" />
     <None Include="wwwroot\images\.DS_Store" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using WebThoiTrang.Filter;
 using WebThoiTrang.Models;
 using WebThoiTrang.Service;
 
@@ -12,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DbContextShop>(options => { options.UseSqlServer(builder.Configuration.GetConnectionString("MyCS")); });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<UserActionFilter>();
+});
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
@@ -59,10 +64,14 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=IndexShop}/{id?}");
-//pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
 
+   
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+       name: "default",
+   pattern: "{controller=Home}/{action=IndexShop}/{id?}");
+   // pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
+});
 app.Run();

@@ -10,7 +10,7 @@ namespace Data
     public class Order
     {
         public Guid OrderId { get; set; }
-
+            
         [Required(ErrorMessage = "User is required.")]
         public Guid UserId { get; set; }
         public User User { get; set; }

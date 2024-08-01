@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <body>
+   
 
     <!-- ======= Hero Section ======= -->
     <section id="hero">
@@ -13,16 +14,19 @@
         </div>
     </section><!-- End Hero -->
     <main id="main">
-
         <!-- ======= Portfolio Section ======= -->
         <section id="portfolio" class="portfolio">
             <div class="container">
-
                 <div class="section-title" data-aos="fade-up">
-                    <h2>Portfolio</h2>
-                    <p>Magnam dolores commodi suscipit eius consequatur ex aliquid fuga eum quidem</p>
+                    <h2>Sản phẩm </h2>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+                    
                 </div>
-
                 <div class="row" data-aos="fade-up" data-aos-delay="100">
                     <div class="col-lg-12 d-flex justify-content-center">
                         <ul id="portfolio-flters">
@@ -34,7 +38,6 @@
                         </ul>
                     </div>
                 </div>
-
                 <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
                     @foreach (var product in Model)
                     {
@@ -53,23 +56,25 @@
                                         </form>
                                         <a asp-action="Details" asp-route-id="@product.ProductId" title="More Details"><i class="bx bx-link"></i></a>
                                     </div>
+                                    <p>Số lượng còn lại: @product.Stock</p>
+                                    @if (product.Stock == 0)
+                                    {
+                                        <p>Hết hàng</p>
+                                    }
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
-
             </div>
         </section><!-- End Portfolio Section -->
         <!-- ======= Contact Section ======= -->
         <section id="contact" class="contact section-bg">
             <div class="container">
-
                 <div class="section-title">
                     <h2>Contact</h2>
                     <p>Magnam dolores commodi suscipit eius consequatur ex aliquid fuga eum quidem</p>
                 </div>
-
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="info d-flex flex-column justify-content-center" data-aos="fade-right">
@@ -90,7 +95,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-lg-8 mt-5 mt-lg-0">
                         <form action="forms/contact.php" method="post" role="form" class="php-email-form" data-aos="fade-left">
                             <div class="row">
@@ -118,7 +122,6 @@
                 </div>
             </div>
         </section><!-- End Contact Section -->
-
     </main><!-- End #main -->
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -131,7 +134,6 @@
                         <p>Et aut eum quis fuga eos sunt ipsa nihil. Labore corporis magni eligendi fuga maxime saepe commodi placeat.</p>
                     </div>
                 </div>
-
                 <div class="row footer-newsletter justify-content-center">
                     <div class="col-lg-6">
                         <form action="" method="post">
@@ -139,7 +141,6 @@
                         </form>
                     </div>
                 </div>
-
                 <div class="social-links">
                     <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
                     <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
@@ -149,7 +150,6 @@
                 </div>
             </div>
         </div>
-
         <div class="container footer-bottom clearfix">
             <div class="copyright">
                 &copy; Copyright <strong><span>Knight</span></strong>. All Rights Reserved
@@ -159,7 +159,5 @@
             </div>
         </div>
     </footer><!-- End Footer -->
-
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
 </body>

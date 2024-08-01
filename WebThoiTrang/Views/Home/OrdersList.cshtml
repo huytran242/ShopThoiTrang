@@ -1,0 +1,73 @@
+﻿@model IEnumerable<WebThoiTrang.Models.OrderDetailsDto>
+
+@{
+    ViewData["Title"] = "Orders List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main id="main" data-aos="fade-up">
+    <section id="orders-list" class="breadcrumbs">
+        <div class="container">
+            <h2>Order List</h2>
+            <ol>
+                <li><a asp-action="IndexShop" asp-controller="Home">Home</a></li>
+                <li>Orders List</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="h-100 h-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-start h-100">
+                <div class="col-lg-12">
+                    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                        <div class="card-body p-0">
+                            <div class="row g-0">
+                                <div class="col-12 p-5">
+                                    <h1 class="fw-bold mb-5">Your Orders</h1>
+
+                                    @foreach (var order in Model)
+                                    {
+                                        <div class="order-item mb-4">
+                                            <h3>Order ID: @order.OrderId</h3>
+                                            <p><strong>Date:</strong> @order.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                                            <p><strong>Total Amount:</strong> @order.TotalAmount.ToString("C")</p>
+                                            <p><strong>Status:</strong> @order.Status</p> <!-- Hiển thị trạng thái đơn hàng -->
+
+                                            <h4>Order Items:</h4>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Image</th>
+                                                        <th>Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in order.Products)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
+                                                            </td>
+                                                            <td>@item.Name</td>
+                                                            <td>@item.Quantity</td>
+                                                            <td>@item.Price.ToString("C")</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <hr class="my-4">
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

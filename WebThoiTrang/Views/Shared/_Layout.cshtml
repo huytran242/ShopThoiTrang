@@ -51,8 +51,10 @@
                 <ul>
                     <li><a class="nav-link scrollto active" asp-action="IndexShop" >Home</a></li>
                     <li><a class="nav-link scrollto" asp-action="CartIndex">Giỏ hàng</a></li>
-                    <li><a class="nav-link scrollto" href="#services">Services</a></li>
+                    <li><a class="nav-link scrollto" asp-action="OrdersList">Đơn hàng</a></li>
                     <li><a class="nav-link scrollto "asp-action="IndexShop">Portfolio</a></li>
+            
+            
                     <li><a class="nav-link scrollto" href="#team">Team</a></li>
 
                     <li class="dropdown">
@@ -60,18 +62,20 @@
                             @if (ViewData["Username"] != null)
                             {
                                 <span class="nav-text">@ViewData["Username"]</span>
+                                <ul>
+                                    <li><a asp-action="Logout" asp-controller="Home">Đăng xuất</a></li>
+                                 
+                                </ul>
                             }
                             else
                             {
                                 <span class="nav-text"> Guest</span>
+                                <ul>
+                                    <li><a asp-action="UserCreate">Đăng kí</a></li>
+                                    <li><a asp-action="IndexLogin" asp-controller="Login">Đăng nhập</a></li>
+                                </ul>
                             }
-                            <ul>
-
-                                <li><a asp-action="Logout" asp-controller="Home">Đăng xuất</a></li>
-                                <li><a asp-action="UserCreate">Đăng kí</a></li>
-                                <li><a asp-action="IndexLogin" asp-controller="Login">Đăng nhập</a></li>
-
-                            </ul>
+                           
                         </a>
                     </li>
                     <li><a class="nav-link scrollto" href="#contact">Phản hồi</a></li>

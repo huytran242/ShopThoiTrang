@@ -1,14 +1,11 @@
 ﻿namespace WebThoiTrang.Models
 {
-    public class ProductDto
+    public class OrderItemDto
     {
         public Guid ProductId { get; set; }
         public string Name { get; set; }
-        public decimal Price { get; set; }
         public string img { get; set; }
-        public string CategoryName { get; set; } 
+        public decimal Price { get; set; }
         public int Quantity { get; set; }
-        public decimal TotalRevenue { get; set; }
-        public int Stock { get; set; }
     }
 }

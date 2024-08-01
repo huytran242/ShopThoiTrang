@@ -5,7 +5,7 @@ using WebThoiTrang.Models;
 using Microsoft.AspNetCore.Http;
 namespace WebThoiTrang.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : BaseController
     {
      
         private readonly DbContextShop _context;
@@ -22,38 +22,47 @@ namespace WebThoiTrang.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> IndexLogin(LoginVM model) 
+        public async Task<IActionResult> IndexLogin(LoginVM model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await _context.users.FirstOrDefaultAsync(u => u.Username == model.Username && u.Password == model.Password);
-                var admin = await _context.admins.FirstOrDefaultAsync(u => u.Username == model.Username && u.Password == model.Password);
+                return RedirectToAction("UserCreate", "Home");
+            }
+           if (ModelState.IsValid)
+            {
+                var user = await _context.users
+                    .Where(u => u.Username == model.Username && u.Password == model.Password)
+                    .Select(u => new { u.UserId, u.Username })
+                    .FirstOrDefaultAsync();
+
+                var admin = await _context.admins
+                    .Where(a => a.Username == model.Username && a.Password == model.Password)
+                    .Select(a => new { a.AdminId, a.Username })
+                    .FirstOrDefaultAsync();
+
                 if (user != null)
                 {
                     // Authentication logic here
-                    // For example, you could use ASP.NET Core Identity or set a cookie
-
-                    // Placeholder for setting up authentication
-                    // await SignInAsync(user);
                     HttpContext.Session.SetString("Username", user.Username);
+                    HttpContext.Session.SetString("UserId", user.UserId.ToString()); // Lưu ID người dùng vào session
                     return RedirectToAction("IndexShop", "Home");
                 }
 
                 if (admin != null)
                 {
                     // Authentication logic here
-                    // For example, you could use ASP.NET Core Identity or set a cookie
-
-                    // Placeholder for setting up authentication
-                    // await SignInAsync(user);
                     HttpContext.Session.SetString("Username", admin.Username);
+                    HttpContext.Session.SetString("UserId", admin.AdminId.ToString()); // Lưu ID quản trị viên vào session
                     return RedirectToAction("IndexAdmin", "Admin");
                 }
+
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
             return View(model);
-
         }
+
+
     }
 }
+

@@ -8,9 +8,10 @@ using System.Diagnostics;
 using System.IO;
 using WebThoiTrang.Models;
 
+
 namespace WebThoiTrang.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         private readonly ILogger<AdminController> _logger;
         private readonly DbContextShop _context;
@@ -31,17 +32,131 @@ namespace WebThoiTrang.Controllers
             // Redirect to the login page or home page
             return RedirectToAction("IndexLogin", "Login");
         }
-        public IActionResult IndexAdmin()
+        public async Task<IActionResult> x()
         {
-            string username = HttpContext.Session.GetString("Username");
-
-            // Đưa giá trị Username vào ViewData để sử dụng trong view
-            ViewData["Username"] = username;
-
-
             return View();
-          
         }
+        public async Task<IActionResult> IndexAdmin()
+        {
+            //string username = HttpContext.Session.GetString("Username");
+            //ViewData["Username"] = username;
+
+            //var revenueSummary = await GetRevenueSummaryAsync(); // Hàm để lấy dữ liệu doanh thu
+
+            //if (revenueSummary == null)
+            //{
+            //    return View("Error"); // Trả về view lỗi nếu dữ liệu bị null
+            //}
+
+            //// Lấy danh sách sản phẩm bán chạy nhất
+            //var topSellingProducts = await _context.products
+            //    .Include(p => p.Category) // Bao gồm thông tin danh mục
+            //    .OrderByDescending(p => p.OrderItems.Sum(o => o.Quantity)) // Sắp xếp theo số lượng bán được
+            //    .Select(p => new ProductDto
+            //    {
+            //        ProductId = p.ProductId,
+            //        Name = p.Name,
+            //        Price = p.Price,
+            //        img = p.img,
+            //        CategoryName = p.Category.Name,
+            //        Quantity = p.OrderItems.Sum(o => o.Quantity),  // Tính số lượng bán được
+            //        TotalRevenue = p.OrderItems.Sum(o => o.Quantity * o.Price)  // Tính số tiền đã bán được
+            //    })
+            //    .Take(10) // Lấy 10 sản phẩm bán chạy nhất
+            //    .ToListAsync();
+
+            //// Tạo ViewModel
+            //var viewModel = new AdminDashboardViewModel
+            //{
+            //    RevenueSummary = revenueSummary,
+            //    TopSellingProducts = topSellingProducts
+            //};
+
+            return View(/*viewModel*/);
+        }
+        public async Task<IActionResult> IndexOderzzzzzzz()
+        {
+            // Retrieve all orders with their associated user and order items
+            var orders = await _context.orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            if (orderList == null || !orderList.Any())
+            {
+                // Trả về view với danh sách rỗng
+                return View(new List<OrdersListDto>());
+            }
+
+            return View(orderList);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmOrder(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Status = "Đã xong";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("IndexOderzzzzzzz");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteOrder(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("IndexOderzzzzzzz");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BulkDelete(List<Guid> orderIds)
+        {
+            var orders = await _context.orders.Where(o => orderIds.Contains(o.OrderId)).ToListAsync();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound();
+            }
+
+            _context.orders.RemoveRange(orders);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("IndexOderzzzzzzz");
+        }
+
         public async Task<IActionResult> ProductAdmin()
         {
             var products = await _context.products.Include(p => p.Category).ToListAsync();
@@ -458,8 +573,48 @@ namespace WebThoiTrang.Controllers
         }
 
         // GET: Users/Create
-     
-    
+
+        private async Task<RevenueSummaryViewModel> GetRevenueSummaryAsync()
+        {
+            var completedOrders = await _context.orders
+                .Where(o => o.Status == "Pending")
+                .ToListAsync();
+
+            if (completedOrders == null || !completedOrders.Any())
+            {
+                return null; // Trả về null nếu không có đơn hàng hoàn thành
+            }
+
+            var dailyRevenue = completedOrders
+                .Where(o => o.CreatedAt.Date == DateTime.UtcNow.Date)
+                .Sum(o => o.TotalAmount);
+
+            var weeklyRevenue = completedOrders
+                .Where(o => o.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+                .Sum(o => o.TotalAmount);
+
+            var monthlyRevenue = completedOrders
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new MonthlyRevenue
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    Revenue = g.Sum(o => o.TotalAmount)
+                }).ToList();
+
+            var totalRevenue = completedOrders.Sum(o => o.TotalAmount);
+
+            return new RevenueSummaryViewModel
+            {
+                DailyRevenue = dailyRevenue,
+                WeeklyRevenue = weeklyRevenue,
+                MonthlyRevenue = monthlyRevenue,
+                TotalRevenue = totalRevenue
+            };
+        }
+      
+
+
     }
 }
 
