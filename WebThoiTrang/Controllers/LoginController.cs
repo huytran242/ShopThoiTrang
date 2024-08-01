@@ -26,10 +26,13 @@ namespace WebThoiTrang.Controllers
         {
             if (!ModelState.IsValid)
             {
+<<<<<<< HEAD
                 return RedirectToAction("UserCreate", "Home");
             }
            if (ModelState.IsValid)
             {
+=======
+>>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
                 var user = await _context.users
                     .Where(u => u.Username == model.Username && u.Password == model.Password)
                     .Select(u => new { u.UserId, u.Username })

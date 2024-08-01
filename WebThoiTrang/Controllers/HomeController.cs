@@ -258,7 +258,7 @@ namespace WebThoiTrang.Controllers
                 }
 
                 // Lưu cartItems vào TempData
-                TempData["CartItems"] = Newtonsoft.Json.JsonConvert.SerializeObject(
+                    TempData["CartItems"] = Newtonsoft.Json.JsonConvert.SerializeObject(
                     cartItems.Select(ci => new ProductDto
                     {
                         ProductId = ci.ProductId,
@@ -394,8 +394,11 @@ namespace WebThoiTrang.Controllers
                 UserId = userId,
                 TotalAmount = totalAmount,
                 Status = "Pending",
+<<<<<<< HEAD
             
 
+=======
+>>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
                 CreatedAt = DateTime.UtcNow,
                 OrderItems = selectedProducts.Select(p => new OrderItem
                 {
@@ -407,13 +410,115 @@ namespace WebThoiTrang.Controllers
 
             _context.orders.Add(order);
 
+<<<<<<< HEAD
          
           
+=======
+            // Cập nhật số lượng Stock của sản phẩm
+            foreach (var productDto in selectedProducts)
+            {
+                var product = await _context.products.FindAsync(productDto.ProductId);
+                if (product != null)
+                {
+                    product.Stock -= productDto.Quantity;
+                    if (product.Stock < 0)
+                    {
+                        // Xử lý khi số lượng stock âm (nếu cần thiết)
+                        product.Stock = 0;
+                    }
+                }
+            }
+>>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Bills", "Home", new { orderId = order.OrderId });
         }
+<<<<<<< HEAD
+=======
+
+
+
+        // Hiển thị hóa đơn
+        public async Task<IActionResult> Bills(Guid orderId)
+        {
+            var username = HttpContext.Session.GetString("Username");
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("IndexLogin", "Login"); // Điều hướng đến trang đăng nhập nếu chưa đăng nhập
+            }
+
+            // Lấy thông tin đơn hàng từ cơ sở dữ liệu
+            var order = await _context.orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Where(o => o.OrderId == orderId && o.User.Username == username)
+                .Select(o => new
+                {
+                    
+                    o.OrderId,
+                    o.CreatedAt,
+                    o.TotalAmount,
+                    UserName = o.User.Username,
+                    OrderItems = o.OrderItems.Select(oi => new
+                    {
+                        oi.Product.img,
+                        oi.Product.Name,
+                        oi.Quantity,
+                        oi.Price
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            // Truyền dữ liệu trực tiếp đến view
+            return View(order);
+        }
+
+        public async Task<IActionResult> OrdersList()
+        {
+            
+           
+            // Lấy ID người dùng từ session
+            var username = HttpContext.Session.GetString("Username");
+            ViewData["Username"] = username ?? "Guest";
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("IndexLogin", "Login"); // Điều hướng đến trang đăng nhập nếu chưa đăng nhập
+            }
+
+            // Lấy danh sách đơn hàng của người dùng từ cơ sở dữ liệu
+            var orders = await _context.orders
+                .Where(o => o.User.Username == username)
+                .OrderByDescending(o => o.CreatedAt)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product) // Bao gồm thông tin sản phẩm cho mỗi đơn hàng
+                .ToListAsync();
+
+            var orderDetails = orders.Select(order => new OrderDetailsDto
+            {
+                OrderId = order.OrderId,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            return View(orderDetails);
+        }
+>>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
 
 
 

@@ -32,6 +32,7 @@ namespace WebThoiTrang.Controllers
             // Redirect to the login page or home page
             return RedirectToAction("IndexLogin", "Login");
         }
+<<<<<<< HEAD
         public async Task<IActionResult> x()
         {
             return View();
@@ -156,6 +157,46 @@ namespace WebThoiTrang.Controllers
 
             return RedirectToAction("IndexOderzzzzzzz");
         }
+=======
+        public async Task<IActionResult> IndexAdmin()
+        {
+            string username = HttpContext.Session.GetString("Username");
+            ViewData["Username"] = username;
+
+            var revenueSummary = await GetRevenueSummaryAsync(); // Hàm để lấy dữ liệu doanh thu
+
+            if (revenueSummary == null)
+            {
+                return View("Error"); // Trả về view lỗi nếu dữ liệu bị null
+            }
+
+            // Lấy danh sách sản phẩm bán chạy nhất
+            var topSellingProducts = await _context.products
+                .Include(p => p.Category) // Bao gồm thông tin danh mục
+                .OrderByDescending(p => p.OrderItems.Sum(o => o.Quantity)) // Sắp xếp theo số lượng bán được
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    img = p.img,
+                    CategoryName = p.Category.Name,
+                    Quantity = p.OrderItems.Sum(o => o.Quantity),  // Tính số lượng bán được
+                    TotalRevenue = p.OrderItems.Sum(o => o.Quantity * o.Price)  // Tính số tiền đã bán được
+                })
+                .Take(10) // Lấy 10 sản phẩm bán chạy nhất
+                .ToListAsync();
+
+            // Tạo ViewModel
+            var viewModel = new AdminDashboardViewModel
+            {
+                RevenueSummary = revenueSummary,
+                TopSellingProducts = topSellingProducts
+            };
+
+            return View(viewModel);
+        }
+>>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
 
         public async Task<IActionResult> ProductAdmin()
         {
