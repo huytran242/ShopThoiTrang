@@ -14,16 +14,22 @@ namespace WebThoiTrang.Models
         public DbSet<OrderItem> orderItems { get; set; }    
         public DbSet<User> users { get; set; }  
         public DbSet<Review> reviews { get; set; }
+        //public DbSet<Voucher> vochers { get; set; }
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+           //  modelBuilder.Entity<Voucher>()
+           // .HasOne(v => v.Order)
+           //.WithMany(o => o.Vouchers)
+           //.HasForeignKey(v => v.OrderId);
             modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Order)
-                .WithMany(o => o.OrderItems)
-                .HasForeignKey(oi => oi.OrderId);
+              .HasOne(oi => oi.Order)
+              .WithMany(o => o.OrderItems)
+              .HasForeignKey(oi => oi.OrderId);
 
+            modelBuilder.Entity<Admin>().HasKey(x =>x.AdminId);
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)

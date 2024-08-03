@@ -9,6 +9,7 @@ namespace Data
 {
     public class User
     {
+        [Key]
         public Guid UserId { get; set; }
 
         [Required(ErrorMessage = "Username is required.")]

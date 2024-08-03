@@ -10,6 +10,7 @@ namespace Data
 {
     public class Product
     {
+        [Key]
         public Guid ProductId { get; set; }
 
         [Required(ErrorMessage = "Product name is required.")]

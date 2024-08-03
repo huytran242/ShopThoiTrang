@@ -39,20 +39,32 @@
     <!-- Container fluid  -->
     <!-- ============================================================== -->
     <div class="container-fluid">
-        <h1 class="fw-bold mb-5">Your Orders</h1>
+        <div>
+            <h1 class="fw-bold mb-5">
+                Your Orders
 
-         <form asp-action="BulkDelete" asp-controller="Admin" method="post">
+            </h1>
+            <form method="get" asp-action="IndexOderzzzzzzz">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="search" placeholder="Search orders">
+                    <label for="searchDate">Search Orders by Date</label>
+                    <input type="date" id="searchDate" name="searchDate" class="form-control" value="@ViewData["SearchDate"]" />
                 </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+      
+        <p>
+            <a asp-action="OrdersSuccsec">Hóa đơn đã hoàn thành </a>
 
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                    <label class="form-check-label" for="selectAll">
-                        Select All
-                    </label>
-                </div>
-        </form>
+        </p>
+        <p>
+
+            <a asp-action="OrdersDelete">Hóa đơn đã hủy </a>
+        </p>
+       
+      
+        <hr />
+       
         @if (Model == null || !Model.Any())
         {
             <p>No orders found.</p>
@@ -63,12 +75,7 @@
                 @foreach (var order in Model)
                 {
                     <div class="order-item mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input order-checkbox" type="checkbox" name="orderIds" value="@order.OrderId">
-                            <label class="form-check-label">
-                                Order ID: @order.OrderId
-                            </label>
-                        </div>
+                        <p><strong>IdOrder:</strong> @order.OrderId</p>
                         <p><strong>Username:</strong> @order.Username</p>
                         <p><strong>Date:</strong> @order.CreatedAt.ToString("MMMM dd, yyyy")</p>
                         <p><strong>Total Amount:</strong> @order.TotalAmount.ToString("C")</p>
@@ -100,16 +107,16 @@
                         </table>
 
                         <!-- Button to confirm order completion -->
-                        @if (order.Status != "Đã xong")
-                        {
-                            <form asp-action="ConfirmOrder" asp-controller="Admin" method="post" style="display:inline;">
-                                <input type="hidden" name="orderId" value="@order.OrderId" />
-                                <button type="submit" class="btn btn-success mt-2">Confirm</button>
-                            </form>
-                        }
+                    <form asp-action="ConfirmOrder" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                        <button type="submit" class="btn btn-success mt-2">Confirm</button>
+                    </form>
+                    
+                
+                       
 
                         <!-- Button to delete order -->
-                        <form asp-action="DeleteOrder" asp-controller="Admin" method="post" style="display:inline;">
+                    <form asp-action="DeleteOrder" asp-controller="Admin" method="post" style="display:inline;">
                             <input type="hidden" name="orderId" value="@order.OrderId" />
                             <button type="submit" class="btn btn-danger mt-2">Delete</button>
                         </form>
@@ -118,7 +125,7 @@
                     </div>
                 }
 
-                <button type="submit" class="btn btn-danger mt-2">Delete Selected</button>
+           
             
         }
     </div>
@@ -139,11 +146,3 @@
 <!-- End Page wrapper  -->
 <!-- ============================================================== -->
 </div>
-<script>
-    document.getElementById("selectAll").addEventListener("click", function () {
-        var checkboxes = document.querySelectorAll(".order-checkbox");
-        for (var checkbox of checkboxes) {
-            checkbox.checked = this.checked;
-        }
-    });
-</script>

@@ -22,6 +22,7 @@ namespace Data
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(50, ErrorMessage = "Status cannot be longer than 50 characters.")]
         public string Status { get; set; }
+       // public ICollection<Voucher> Vouchers { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

@@ -9,6 +9,7 @@ namespace Data
 {
     public class Review
     {
+        [Key]
         public Guid ReviewId { get; set; }
 
         [Required(ErrorMessage = "Product is required.")]

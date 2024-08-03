@@ -9,6 +9,7 @@ namespace Data
 {
     public class Category
     {
+        [Key]
         public Guid CategoryId { get; set; }
 
         [Required(ErrorMessage = "Category name is required.")]

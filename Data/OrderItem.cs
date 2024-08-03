@@ -9,6 +9,7 @@ namespace Data
 {
     public class OrderItem
     {
+        [Key]
         public Guid OrderItemId { get; set; }
 
         [Required(ErrorMessage = "Order is required.")]

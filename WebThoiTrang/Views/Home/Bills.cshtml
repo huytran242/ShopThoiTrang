@@ -7,10 +7,7 @@
             <div class="row">
                 <ul class="list-unstyled">
                     <li class="text-black"><strong>Username:</strong> @Model.UserName</li>
-<<<<<<< HEAD
-=======
-         
->>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
+
                     <li class="text-black mt-1"><strong>Date:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy")</li>
                 </ul>
                 <hr>
@@ -21,19 +18,21 @@
                             <img src="@item.img" class="img-fluid rounded-3" alt="@item.Name">
                         </div>
                         <div class="col-md-4 col-lg-4 col-xl-4">
-<<<<<<< HEAD
-=======
-                        
->>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
+                            <p class="float-end">
+                            <p>Tên sản phẩm</p>
                             <h6 class="mb-0">@item.Name</h6>
                         </div>
+                  
                         <div class="col-xl-2">
+                         
                             <p class="float-end">
+                            <p>Đơn giá</p>
                                 @item.Price.ToString("C") <!-- Hiển thị giá sản phẩm -->
                             </p>
                         </div>
                         <div class="col-xl-2">
                             <p class="float-end">
+                            <p>Số lượng</p>
                                 @item.Quantity <!-- Hiển thị số lượng sản phẩm -->
                             </p>
                         </div>
@@ -43,12 +42,12 @@
                 <div class="row text-black">
                     <div class="col-xl-12">
                         <p class="float-end fw-bold">
-                            Total: @Model.TotalAmount.ToString("C") <!-- Hiển thị tổng tiền -->
+                            Tổng tiền: @Model.TotalAmount.ToString("C") <!-- Hiển thị tổng tiền -->
                         </p>
                     </div>
                     <hr style="border: 2px solid black;">
                 </div>
-<<<<<<< HEAD
+
                 <div class="row text-black">
                     <form method="post" asp-action="ConfirmPurchase">
                         <input type="hidden" name="orderId" value="@Model.OrderId" />
@@ -65,11 +64,11 @@
                             <button class="btn btn-danger" asp-action="CartIndex">Quay lại giỏ hàng</button>
                         </div>
                     </form>
-=======
+
                 <div class="text-center" style="margin-top: 90px;">
                     <a href="#" class="text-info"><u>View in browser</u></a>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
->>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
+
                 </div>
             </div>
         </div>

@@ -71,12 +71,12 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
        name: "default",
-<<<<<<< HEAD
+
    pattern: "{controller=Home}/{action=IndexShop}/{id?}");
    // pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
-=======
-   // pattern: "{controller=Home}/{action=IndexShop}/{id?}");
-    pattern: "{controller=Admin}/{action=IndexAdmin}/{id?}");
->>>>>>> fa7bf7715d95be9f883530a630fdf38a38bd80a1
+
+
+ 
+
 });
 app.Run();
