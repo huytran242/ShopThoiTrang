@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using WebThoiTrang.Filter;
+using WebThoiTrang.Interface;
 using WebThoiTrang.Models;
 using WebThoiTrang.Service;
 
@@ -47,6 +48,7 @@ builder.Services.AddSession(options =>
 
 // Register CartService
 builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddLogging();
 
 var app = builder.Build();

@@ -31,7 +31,7 @@
                                     </p>
                                     <p>
 
-                                        <a asp-action="OrdersDeleteUser">Hóa đơn đã hủy </a>
+                                        <a asp-action="OrdersList">Hóa đơn chưa hoàn thành </a>
                                     </p>
                                     @foreach (var order in Model)
                                     {
@@ -67,21 +67,10 @@
                                                     }
                                                 </tbody>
                                             </table>
-                                            <div>
-
-                                                <form asp-action="ConfirmDelete" asp-controller="Home" method="post" style="display:inline;">
-                                                    <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                    <button type="submit" class="btn btn-success mt-2">Hủy</button>
-                                                </form>
-                                                <form asp-action="Confirm" asp-controller="Home" method="post" style="display:inline;">
-                                                    <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                    <button type="submit" class="btn btn-success mt-2">Đã nhận được hàng</button>
-                                                </form>
-                                             </div>
                                             <hr class="my-4">
                                         </div>
                                     }
-                                
+
 
                                 </div>
                             </div>

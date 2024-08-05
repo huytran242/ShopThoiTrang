@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using WebThoiTrang.Controllers;
+using WebThoiTrang.Extensions;
 using WebThoiTrang.Models;
 
 namespace WebThoiTrang.Service
@@ -63,7 +64,30 @@ namespace WebThoiTrang.Service
             // Lưu giỏ hàng vào phiên làm việc
             SaveCart(cart);
         }
+        public int GetProductStock(Guid productId)
+        {
+            var product = _dbContext.products.Find(productId);
+            return product?.Stock ?? 0;
+        }
 
+        public void UpdateQuantity(Guid productId, int quantity)
+        {
+            var session = _httpContextAccessor.HttpContext.Session;
+            var cart = GetCart();
+
+            var cartItem = cart.SingleOrDefault(item => item.ProductId == productId);
+            if (cartItem != null)
+            {
+                var product =_dbContext.products.Find(productId);
+                if (product == null || quantity > product.Stock)
+                {
+                    throw new Exception($"Số lượng sản phẩm {product?.Name} mà quý khách chọn vượt quá số lượng kho.");
+                }
+
+                cartItem.Quantity = quantity;
+                session.SetObjectAsJson("Cart", cart);
+            }
+        }
         public List<OrderItem> GetCart()
         {
             var session = _httpContextAccessor.HttpContext.Session;

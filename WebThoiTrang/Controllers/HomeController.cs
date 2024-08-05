@@ -8,6 +8,7 @@ using WebThoiTrang.Service;
 using Newtonsoft.Json;
 using System.Security.Claims;
 using WebThoiTrang.Extensions;
+using WebThoiTrang.Interface;
 namespace WebThoiTrang.Controllers
 {
     public class HomeController : BaseController
@@ -194,8 +195,7 @@ namespace WebThoiTrang.Controllers
             return (_context.users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
 
-        // Action để hiển thị danh sách OrderItem
-        // Thêm sản phẩm vào giỏ hàng
+      
 
 
         public IActionResult AddToCart(Guid productId)
@@ -291,6 +291,7 @@ namespace WebThoiTrang.Controllers
             try
             {
                 var cartItems = _cartService.GetCart();
+               
                 var cartItemsDto = cartItems?.Select(ci => new ProductDto
                 {
                     ProductId = ci.ProductId,
@@ -299,7 +300,11 @@ namespace WebThoiTrang.Controllers
                     img = ci.Product.img,
                     CategoryName = ci.Product.Category.Name,
                     Quantity = ci.Quantity
-                }).ToList() ?? new List<ProductDto>();
+
+                }).ToList() 
+
+                ?? new List<ProductDto>();
+              
 
                 TempData["CartItems"] = JsonConvert.SerializeObject(cartItemsDto, new JsonSerializerSettings
                 {
@@ -310,6 +315,7 @@ namespace WebThoiTrang.Controllers
             }
             catch (Exception ex)
             {
+
                 _logger.LogError(ex, "Error retrieving cart items");
                 return StatusCode(500, "Internal server error");
             }
@@ -400,9 +406,10 @@ namespace WebThoiTrang.Controllers
                 totalAmount += product.Price * product.Quantity;
 
                 // Update product stock
-               
-            }
+              
 
+            }
+          
             order.TotalAmount = totalAmount;
 
             // Add the order to the database
@@ -419,8 +426,8 @@ namespace WebThoiTrang.Controllers
 
 
 
-    // Hiển thị hóa đơn
-    public async Task<IActionResult> Bills(Guid orderId)
+        // Hiển thị hóa đơn
+        public async Task<IActionResult> Bills(Guid orderId)
         {
             var username = HttpContext.Session.GetString("Username");
 
@@ -478,7 +485,7 @@ namespace WebThoiTrang.Controllers
                 .OrderByDescending(o => o.CreatedAt)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
-                     .Where(o => o.Status == "Prepaid" || o.Status == "Delivery")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
+                     .Where(o => o.Status == "Prepaid" || o.Status == "Delivery" || o.Status == "Đã giao")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
                 .ToListAsync();
 
             var orderDetails = orders.Select(order => new OrderDetailsDto
@@ -585,7 +592,49 @@ namespace WebThoiTrang.Controllers
             return View(orderDetails);
         }
 
+        public async Task<IActionResult> OrdersDeleteByUser()
+        {
 
+
+            // Lấy ID người dùng từ session
+            var username = HttpContext.Session.GetString("Username");
+            ViewData["Username"] = username ?? "Guest";
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("IndexLogin", "Login"); // Điều hướng đến trang đăng nhập nếu chưa đăng nhập
+            }
+
+            // Lấy danh sách đơn hàng của người dùng từ cơ sở dữ liệu
+            var orders = await _context.orders
+                .Where(o => o.User.Username == username)
+                .OrderByDescending(o => o.CreatedAt)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                     .Where(o => o.Status == "Hủy bởi khách hàng")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
+                .ToListAsync();
+
+            var orderDetails = orders.Select(order => new OrderDetailsDto
+            {
+                OrderId = order.OrderId,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+
+                    Quantity = oi.Quantity
+                }).ToList()
+
+            }).ToList();
+
+            return View(orderDetails);
+        }
 
         [HttpPost]
         public async Task<IActionResult> ConfirmPurchase(Guid orderId, string paymentMethod)
@@ -628,10 +677,50 @@ namespace WebThoiTrang.Controllers
 
             return RedirectToAction("OrdersList", new { orderId = order.OrderId });
         }
+        [HttpPost]
+        public async Task<IActionResult> ConfirmDelete(Guid orderId)
+        {
+            var order = await _context.orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
 
-       
+            // Cập nhật trạng thái của đơn hàng
+            order.Status = "Đã hủy bởi khách hàng";
 
-       
+            foreach (var item in order.OrderItems)
+            {
+                var product = item.Product; // Sử dụng liên kết đã bao gồm sản phẩm
+
+                if (product != null)
+                {
+                    product.Stock += item.Quantity; // Cộng số lượng vào kho
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OrdersList");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Confirm(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Status = "Đã nhận được hàng";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OrdersList");
+        }
+
+
+
     }
 }
 

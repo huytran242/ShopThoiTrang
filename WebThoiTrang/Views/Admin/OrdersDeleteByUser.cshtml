@@ -39,23 +39,21 @@
     <!-- Container fluid  -->
     <!-- ============================================================== -->
     <div class="container-fluid">
-        <div>
-            <h1 class="fw-bold mb-5">
-                Your Orders
-
-            </h1>
-            <form method="get" asp-action="IndexOderzzzzzzz">
-                <div class="form-group">
-                    <label for="searchDate">Search Orders by Date</label>
-                    <input type="date" id="searchDate" name="searchDate" class="form-control" value="@ViewData["SearchDate"]" />
-                </div>
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
-        </div>
-      
+        <h1 class="fw-bold mb-5">Your Orders</h1>
+        <form method="get" asp-action="OrdersDelete">
+            <div class="form-group">
+                <label for="searchDate">Search Orders by Date</label>
+                <input type="date" id="searchDate" name="searchDate" class="form-control" value="@ViewData["SearchDate"]" />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
         <p>
             <a asp-action="OrdersSuccsec">Hóa đơn đã hoàn thành </a>
 
+        </p>
+        <p>
+
+          <a asp-action="IndexOderzzzzzzz">Hóa đơn cần xác nhận</a>
         </p>
         <p>
 
@@ -68,69 +66,58 @@
         <p>
             <a asp-action="DagiaoOrder">Hóa đơn đã được giao</a>
         </p>
-        <p>
-            <a asp-action="OrdersDeleteByUser">Hóa đơn bị hủy bởi khách hàng</a>
-        </p>
         <hr />
-       
         @if (Model == null || !Model.Any())
         {
             <p>No orders found.</p>
         }
         else
         {
-           
-                @foreach (var order in Model)
-                {
-                    <div class="order-item mb-4">
-                        <p><strong>IdOrder:</strong> @order.OrderId</p>
-                        <p><strong>Username:</strong> @order.Username</p>
-                        <p><strong>Date:</strong> @order.CreatedAt.ToString("MMMM dd, yyyy")</p>
-                        <p><strong>Total Amount:</strong> @order.TotalAmount.ToString("C")</p>
-                        <p><strong>Status:</strong> @order.Status</p>
 
-                        <h4>Order Items:</h4>
-                        <table class="table table-bordered">
-                            <thead>
+            @foreach (var order in Model)
+            {
+                <div class="order-item mb-4">
+                    <p><strong>IdOrder:</strong> @order.OrderId</p>
+                    <p><strong>Username:</strong> @order.Username</p>
+                    <p><strong>Date:</strong> @order.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Total Amount:</strong> @order.TotalAmount.ToString("C")</p>
+                    <p><strong>Status:</strong> @order.Status</p>
+
+                    <h4>Order Items:</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.Products)
+                            {
                                 <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
+                                    <td>
+                                        <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
+                                    </td>
+                                    <td>@item.Name</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price.ToString("C")</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in order.Products)
-                                {
-                                    <tr>
-                                        <td>
-                                            <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
-                                        </td>
-                                        <td>@item.Name</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.Price.ToString("C")</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                            }
+                        </tbody>
+                    </table>
 
-                        <!-- Button to confirm order completion -->
-                    <form asp-action="ConfirmOrder" asp-controller="Admin" method="post" style="display:inline;">
-                        <input type="hidden" name="orderId" value="@order.OrderId" />
-                        <button type="submit" class="btn btn-success mt-2">Confirm</button>
-                    </form>
-                    
-                
-                       
 
-              
 
-                        <hr class="my-4">
-                    </div>
-                }
 
-           
-            
+
+                    <hr class="my-4">
+                </div>
+            }
+
+         
+
         }
     </div>
     <!-- ============================================================== -->

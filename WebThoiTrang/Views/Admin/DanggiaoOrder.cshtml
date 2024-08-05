@@ -1,0 +1,148 @@
+﻿@model IEnumerable<WebThoiTrang.Models.OrdersListDto>
+
+    @{
+    ViewData["Title"] = "Orders List";
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+    }
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        <div class="page-breadcrumb">
+            <div class="row align-items-center">
+                <div class="col-md-6 col-8 align-self-center">
+                    <h3 class="page-title mb-0 p-0">Hóa đơn</h3>
+                    <div class="d-flex align-items-center">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Hóa đơn</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-md-6 col-4 align-self-center">
+                    <div class="text-end upgrade-btn">
+                        <a href="https://www.wrappixel.com/templates/monsteradmin/"
+                           class="btn btn-success d-none d-md-inline-block text-white" target="_blank">
+                            Upgrade to
+                            Pro
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Container fluid  -->
+        <!-- ============================================================== -->
+        <div class="container-fluid">
+            <h1 class="fw-bold mb-5">Your Orders</h1>
+            <form method="get" asp-action="OrdersDelete">
+                <div class="form-group">
+                    <label for="searchDate">Search Orders by Date</label>
+                    <input type="date" id="searchDate" name="searchDate" class="form-control" value="@ViewData["SearchDate"]" />
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <p>
+                <a asp-action="OrdersSuccsec">Hóa đơn đã hoàn thành </a>
+
+            </p>
+            <p>
+
+                <a asp-action="IndexOderzzzzzzz">Hóa đơn cần xác nhận</a>
+            </p>
+        <p>
+
+            <a asp-action="OrdersDelete">Hóa đơn đã hủy </a>
+        </p>
+        <p>
+
+            <a asp-action="DanggiaoOrder">Hóa đơn đang được giao</a>
+        </p>
+        <p>
+            <a asp-action="DagiaoOrder">Hóa đơn đã được giao</a>
+        </p>
+        <p>
+            <a asp-action="OrdersDeleteByUser">Hóa đơn bị hủy bởi khách hàng</a>
+        </p>
+            <hr />
+            @if (Model == null || !Model.Any())
+        {
+            <p>No orders found.</p>
+        }
+        else
+        {
+
+            @foreach (var order in Model)
+            {
+            <div class="order-item mb-4">
+                <p><strong>IdOrder:</strong> @order.OrderId</p>
+                <p><strong>Username:</strong> @order.Username</p>
+                <p><strong>Date:</strong> @order.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                <p><strong>Total Amount:</strong> @order.TotalAmount.ToString("C")</p>
+                <p><strong>Status:</strong> @order.Status</p>
+
+                <h4>Order Items:</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in order.Products)
+                            {
+                        <tr>
+                            <td>
+                                <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                        </tr>
+                            }
+                    </tbody>
+                </table>
+
+
+                    <form asp-action="DanggiaoOrder" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                        <button type="submit" class="btn btn-success mt-2">Đã giao</button>
+                    </form>
+
+                    <form asp-action="DeleteOrder" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                        <button type="submit" class="btn btn-danger mt-2">Delete</button>
+                    </form>
+                <hr class="my-4">
+            </div>
+            }
+
+
+
+        }
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Container fluid  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <footer class="footer text-center">
+            © 2021 Monster Admin by <a href="https://www.wrappixel.com/">wrappixel.com</a>
+        </footer>
+        <!-- ============================================================== -->
+        <!-- End footer -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Page wrapper  -->
+    <!-- ============================================================== -->
+    </div>

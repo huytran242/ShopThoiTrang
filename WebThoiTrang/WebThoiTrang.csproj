@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Admin\OrdersListAd.cshtml" />
+    <Content Remove="Views\Home\OrdersDeleteByUser.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Admin\OrdersListAd.cshtml" />
+    <None Include="Views\Home\OrdersDeleteByUser.cshtml" />
     <None Include="wwwroot\css\icons\.DS_Store" />
     <None Include="wwwroot\images\.DS_Store" />
   </ItemGroup>
@@ -32,6 +32,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Home\OrdersDeleteByUser.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Home\OrdersDeleteByUser.cshtml" />
   </ItemGroup>
 
 </Project>

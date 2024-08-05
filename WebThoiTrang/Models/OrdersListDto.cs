@@ -8,6 +8,7 @@
             public DateTime CreatedAt { get; set; }
             public decimal TotalAmount { get; set; }
             public string Status { get; set; }
+            public string ? LyDoHuyDon {  get; set; }
             public List<ProductDto> Products { get; set; } = new List<ProductDto>();
         }
 

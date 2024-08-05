@@ -1,0 +1,104 @@
+﻿@model OrderViewModel
+@{
+    ViewData["Title"] = "Confirm Purchase";
+}
+
+<main id="main" data-aos="fade-up">
+    <section id="hero">
+        <div class="hero-container">
+            <a asp-action="IndexShop" class="hero-logo" data-aos="zoom-in"><img src="/img/hero-logo.png" alt=""></a>
+        </div>
+    </section><!-- End Hero -->
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Bills</h2>
+                <ol>
+                    <li><a asp-action="IndexShop">Home</a></li>
+                    <li>Xác nhận đơn hàng</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Portfolio Details Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-8">
+                    <div class="portfolio-details-slider swiper">
+
+
+
+
+
+
+                        <div class="card">
+                            <div class="card-body mx-4">
+                                <div class="container">
+                                    <p class="my-5 mx-5" style="font-size: 30px;">Thank you for your purchase!</p>
+                                    <div class="row">
+                                        <ul class="list-unstyled">
+                                            <li class="text-black"><strong>Username:</strong> @Model.UserName</li>
+                                            <li class="text-black mt-1"><strong>Date:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy")</li>
+                                        </ul>
+                                        <hr>
+                                        @foreach (var item in Model.OrderItems)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                    <img src="@item.img" class="img-fluid rounded-3" alt="@item.Name">
+                                                </div>
+                                                <div class="col-md-4 col-lg-4 col-xl-4">
+                                                    <h6 class="mb-0">@item.Name</h6>
+                                                </div>
+                                                <div class="col-xl-2">
+                                                    <p class="float-end">
+                                                        @item.Price.ToString("C") <!-- Hiển thị giá sản phẩm -->
+                                                    </p>
+                                                </div>
+                                                <div class="col-xl-2">
+                                                    <p class="float-end">
+                                                        @item.Quantity <!-- Hiển thị số lượng sản phẩm -->
+                                                    </p>
+                                                </div>
+                                                <hr>
+                                            </div>
+                                        }
+                                        <div class="row text-black">
+                                            <div class="col-xl-12">
+                                                <p class="float-end fw-bold">
+                                                    Total: @Model.TotalAmount.ToString("C") <!-- Hiển thị tổng tiền -->
+                                                </p>
+                                            </div>
+                                            <hr style="border: 2px solid black;">
+                                        </div>
+                                        <div class="text-center" style="margin-top: 90px;">
+                                            <form method="post" asp-action="ConfirmDelete">
+                                                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                                <button type="submit" class="btn btn-primary" name="paymentMethod" value="Hủy bởi khách hàng">Hủy</button>
+                                                <button type="submit" class="btn btn-secondary" name="paymentMethod" value="Đã nhận được hàng">Xác nhận</button>
+                                                <button type="submit" class="btn btn-primary mt-3">Confirm Purchase</button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </section><!-- End Portfolio Details Section -->
+
+</main><!-- End #main -->

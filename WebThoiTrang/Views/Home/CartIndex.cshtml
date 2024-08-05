@@ -1,8 +1,15 @@
-﻿@model WebThoiTrang.Models.CartDto
+﻿@using Newtonsoft.Json
+﻿
+@model WebThoiTrang.Models.CartDto
 
 @{
     ViewData["Title"] = "CartIndex";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var stockData = Model.Products.ToDictionary(
+        p => p.ProductId.ToString(), // ID sản phẩm
+        p => p.Stock // Số lượng tồn kho
+    );
 }
 
 <body>
@@ -22,6 +29,7 @@
                                             <h6 class="mb-0 text-muted">@Model.Products.Count() items</h6>
                                         </div>
                                         <hr class="my-4">
+                                     
                                         @foreach (var item in Model.Products)
                                         {
                                             <div class="row mb-4 d-flex justify-content-between align-items-center">
@@ -33,7 +41,9 @@
                                                     <h6 class="mb-0">@item.Name</h6>
                                                 </div>
                                                 <div class="col-md-3 col-lg-3 col-xl-3 d-flex align-items-center">
+                                                  
                                                     <input id="quantity-@item.ProductId" name="quantity" value="@item.Quantity" type="number" class="form-control form-control-sm mx-2" min="1" onchange="updateQuantity('@item.ProductId')" />
+                                                    <div id="error-@item.ProductId" class="text-danger" style="display:none;">Số lượng sản phẩm mà quý khách chọn vượt quá số lượng kho</div>
                                                 </div>
                                                 <div class="col-md-2 col-lg-2 col-xl-2">
                                                     <h6 id="price-@item.ProductId" class="mb-0 text-end" data-price="@item.Price">$@(@item.Price * @item.Quantity)</h6>
@@ -70,20 +80,7 @@
                                 <h5 class="text-uppercase">Items (@Model.Products.Count())</h5>
                                 <h5 id="total-price-summary">@Model.Products.Sum(x => x.Price * x.Quantity).ToString("C")</h5>
                             </div>
-                            <h5 class="text-uppercase mb-3">Shipping</h5>
-                            <div class="mb-4 pb-2">
-                                <select class="form-select">
-                                    <option value="1">Standard Delivery - €5.00</option>
-                                    <option value="2">Express Delivery - €10.00</option>
-                                </select>
-                            </div>
-                            <h5 class="text-uppercase mb-3">Coupon Code</h5>
-                            <div class="mb-5">
-                                <div class="form-outline">
-                                    <input type="text" id="couponCode" class="form-control form-control-lg" />
-                                    <label class="form-label" for="couponCode">Enter your code</label>
-                                </div>
-                            </div>
+                            
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-5">
                                 <h5 class="text-uppercase">Total Price</h5>
@@ -151,20 +148,26 @@
 
     <!-- JavaScript -->
     <script>
+             
+        const stockData = @Html.Raw(JsonConvert.SerializeObject(@stockData));
         function updateQuantity(productId) {
             var quantityInput = document.getElementById('quantity-' + productId);
             var quantity = parseInt(quantityInput.value, 10);
+            
+            if (quantity > stockData[productId]) {
+                // Hiển thị thông báo lỗi nếu số lượng vượt quá tồn kho
+                alert('Số lượng sản phẩm vượt quá số lượng tồn kho');
+                // Đặt lại số lượng trong input
+                quantityInput.value = stockData[productId];
+            } else {
+                // Cập nhật giá và tổng giá
+                var pricePerItem = parseFloat(document.getElementById('price-' + productId).dataset.price);
+                var newPrice = (pricePerItem * quantity).toFixed(2);
+                var formattedPrice = Number(newPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                document.getElementById('price-' + productId).textContent = formattedPrice;
+            }
 
-            // Update price in frontend
-            var pricePerItem = parseFloat(document.getElementById('price-' + productId).dataset.price);
-            var newPrice = (pricePerItem * quantity).toFixed(2);
-            var formattedPrice = Number(newPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-            document.getElementById('price-' + productId).textContent = formattedPrice;
-
-            // Update hidden input field in form for submission
-            document.querySelector(`input[name="products[${productId}].Quantity"]`).value = quantity;
-
-            // Update total price
+            // Cập nhật tổng giá
             updateTotalPrice();
         }
 
@@ -181,6 +184,8 @@
 
             document.getElementById('final-total-price').textContent = totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
             document.getElementById('total-price-summary').textContent = document.getElementById('final-total-price').textContent;
+
         }
+     
     </script>
 </body>

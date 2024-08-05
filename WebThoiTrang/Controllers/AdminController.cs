@@ -34,10 +34,7 @@ namespace WebThoiTrang.Controllers
             return RedirectToAction("IndexLogin", "Login");
         }
 
-        public async Task<IActionResult> x()
-        {
-            return View();
-        }
+      
         public async Task<IActionResult> IndexAdmin()
         {
             string username = HttpContext.Session.GetString("Username");
@@ -47,7 +44,7 @@ namespace WebThoiTrang.Controllers
 
             if (revenueSummary == null)
             {
-                return View("Error"); // Trả về view lỗi nếu dữ liệu bị null
+                return View(); 
             }
 
             // Lấy danh sách sản phẩm bán chạy nhất
@@ -121,14 +118,14 @@ namespace WebThoiTrang.Controllers
             // Return the view with the list of orders
             return View(orderList);
         }
-        public async Task<IActionResult> OrdersSuccsec(DateTime? searchDate)
+        public async Task<IActionResult> OrdersDeleteByUser(DateTime? searchDate)
         {
-            // Define the query to include related entities and filter by status
+
             var query = _context.orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .Where(o => o.Status == "Đã xong");
+                 .Include(o => o.User)
+                 .Include(o => o.OrderItems)
+                     .ThenInclude(oi => oi.Product)
+                 .Where(o => o.Status == "Đã hủy bởi khách hàng");
 
             // Filter by the searchDate if it is provided
             if (searchDate.HasValue)
@@ -140,6 +137,186 @@ namespace WebThoiTrang.Controllers
                 query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
             }
 
+            // Retrieve the filtered orders
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            // Return the view with the list of orders
+            return View(orderList);
+        }
+        public async Task<IActionResult> OrdersComFirm(DateTime? searchDate)
+        {
+
+            var query = _context.orders
+                 .Include(o => o.User)
+                 .Include(o => o.OrderItems)
+                     .ThenInclude(oi => oi.Product)
+                 .Where(o => o.Status == "Đã xác nhận bởi cửa hàng");
+
+            // Filter by the searchDate if it is provided
+            if (searchDate.HasValue)
+            {
+                // Assuming the searchDate is for a specific day (e.g., searching for orders on a particular date)
+                var startDate = searchDate.Value.Date;
+                var endDate = startDate.AddDays(1); // Include the whole day
+
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            // Retrieve the filtered orders
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            // Return the view with the list of orders
+            return View(orderList);
+        }
+        public async Task<IActionResult> DagiaoOrder(DateTime? searchDate)
+        {
+            // Define the query to include related entities and filter by status
+            var query = _context.orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Where(o => o.Status == "Đã giao");
+
+            // Filter by the searchDate if it is provided
+            if (searchDate.HasValue)
+            {
+                // Assuming the searchDate is for a specific day (e.g., searching for orders on a particular date)
+                var startDate = searchDate.Value.Date;
+                var endDate = startDate.AddDays(1); // Include the whole day
+
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            // Retrieve the filtered orders
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            // Return the view with the list of orders
+            return View(orderList);
+        }
+        public async Task<IActionResult> DanggiaoOrder(DateTime? searchDate)
+        {
+            // Define the query to include related entities and filter by status
+            var query = _context.orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Where(o => o.Status == "Đang giao");
+
+            // Filter by the searchDate if it is provided
+            if (searchDate.HasValue)
+            {
+                // Assuming the searchDate is for a specific day (e.g., searching for orders on a particular date)
+                var startDate = searchDate.Value.Date;
+                var endDate = startDate.AddDays(1); // Include the whole day
+
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            // Retrieve the filtered orders
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            // Return the view with the list of orders
+            return View(orderList);
+        }
+        public async Task<IActionResult> OrdersSuccsec(DateTime? searchDate)
+        {
+            // Define the query to include related entities and filter by status
+            var query = _context.orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Where(o => o.Status == "Đã nhận được hàng");
+
+            // Filter by the searchDate if it is provided
+            if (searchDate.HasValue)
+            {
+                // Assuming the searchDate is for a specific day (e.g., searching for orders on a particular date)
+                var startDate = searchDate.Value.Date;
+                var endDate = startDate.AddDays(1); // Include the whole day
+
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+         
             // Retrieve the filtered orders
             var orders = await query
                 .OrderByDescending(o => o.CreatedAt)
@@ -227,10 +404,11 @@ namespace WebThoiTrang.Controllers
                 return NotFound();
             }
 
-            order.Status = "Đã xong";
+            order.Status = "Đã xác nhận bởi cửa hàng";
+         
             await _context.SaveChangesAsync();
           
-            return RedirectToAction("OrdersSuccsec");
+            return RedirectToAction("OrdersComFirm");
 
         }
 
@@ -248,10 +426,38 @@ namespace WebThoiTrang.Controllers
 
             return RedirectToAction("OrdersDelete");
         }
-
-       
-
         
+        [HttpPost]
+        public async Task<IActionResult> DanggiaoOrder(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Status = "Đang giao";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("DanggiaoOrder");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DagiaoOrder(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Status = "Đã giao";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("DagiaoOrder");
+        }
+
+
 
 
         public async Task<IActionResult> ProductAdmin()
