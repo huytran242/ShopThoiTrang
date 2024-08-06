@@ -25,14 +25,7 @@
                             <div class="row g-0">
                                 <div class="col-12 p-5">
                                     <h1 class="fw-bold mb-5">Your Orders</h1>
-                                    <p>
-                                        <a asp-action="OrdersSuccessUser">Hóa đơn đã hoàn thành </a>
-
-                                    </p>
-                                    <p>
-
-                                        <a asp-action="OrdersDeleteUser">Hóa đơn đã hủy </a>
-                                    </p>
+                                
                                     @foreach (var order in Model)
                                     {
                                         <div class="order-item mb-4">
@@ -73,10 +66,16 @@
                                                     <input type="hidden" name="orderId" value="@order.OrderId" />
                                                     <button type="submit" class="btn btn-success mt-2">Hủy</button>
                                                 </form>
-                                                <form asp-action="Confirm" asp-controller="Home" method="post" style="display:inline;">
-                                                    <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                    <button type="submit" class="btn btn-success mt-2">Đã nhận được hàng</button>
-                                                </form>
+                                                @if (order.Status != "Đang giao")
+                                                {
+                                                    <form asp-action="Confirm" asp-controller="Home" method="post" style="display:inline;">
+                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                        <button type="submit" class="btn btn-success mt-2">Đã nhận được hàng</button>
+                                                    </form>
+                                                }
+                                                <a asp-action="ExportInvoiceToExcel" asp-route-orderId="@order.OrderId" class="btn btn-primary">
+                                                    Export to Excel
+                                                </a>
                                              </div>
                                             <hr class="my-4">
                                         </div>

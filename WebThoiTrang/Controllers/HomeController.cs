@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using WebThoiTrang.Extensions;
 using WebThoiTrang.Interface;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 namespace WebThoiTrang.Controllers
 {
     public class HomeController : BaseController
@@ -35,13 +37,19 @@ namespace WebThoiTrang.Controllers
             return View();
         }
 
-        public async Task<IActionResult> IndexShop()
+        public async Task<IActionResult> IndexShop(string searchTerm)
         {
             var username = HttpContext.Session.GetString("Username");
             ViewData["Username"] = username ?? "Guest"; // Nếu không có Username trong Session, gán giá trị là "Guest"
-            var products = await _context.products
-             .Include(p => p.Category)
-             .ToListAsync();
+            var products = string.IsNullOrWhiteSpace(searchTerm) ?
+           await _context.products.Include(p => p.Category).ToListAsync() :
+           await _context.products.Include(p => p.Category)
+                                  .Where(p => p.Name.Contains(searchTerm) ||
+                                              p.Description.Contains(searchTerm) ||
+                                              p.Category.Name.Contains(searchTerm))
+                                  .ToListAsync();
+
+            ViewData["SearchTerm"] = searchTerm;
             ViewData["Username"] = username;
             return View(products);
         }
@@ -299,12 +307,14 @@ namespace WebThoiTrang.Controllers
                     Price = ci.Price,
                     img = ci.Product.img,
                     CategoryName = ci.Product.Category.Name,
-                    Quantity = ci.Quantity
+                    Quantity = ci.Quantity,
+                    Stock = ci.Product.Stock
 
                 }).ToList() 
 
                 ?? new List<ProductDto>();
-              
+                var stockData = cartItemsDto.ToDictionary(p => p.ProductId.ToString(), p => p.Stock);
+                ViewBag.StockData = stockData;
 
                 TempData["CartItems"] = JsonConvert.SerializeObject(cartItemsDto, new JsonSerializerSettings
                 {
@@ -485,7 +495,7 @@ namespace WebThoiTrang.Controllers
                 .OrderByDescending(o => o.CreatedAt)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
-                     .Where(o => o.Status == "Prepaid" || o.Status == "Delivery" || o.Status == "Đã giao")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
+                    .Where(o => o.Status != "Đã hủy bởi khách hàng" && o.Status != "Pending")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
                 .ToListAsync();
 
             var orderDetails = orders.Select(order => new OrderDetailsDto
@@ -610,7 +620,7 @@ namespace WebThoiTrang.Controllers
                 .OrderByDescending(o => o.CreatedAt)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
-                     .Where(o => o.Status == "Hủy bởi khách hàng")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
+                     .Where(o => o.Status == "Đã hủy bởi khách hàng")// Bao gồm thông tin sản phẩm cho mỗi đơn hàng
                 .ToListAsync();
 
             var orderDetails = orders.Select(order => new OrderDetailsDto
@@ -719,7 +729,78 @@ namespace WebThoiTrang.Controllers
             return RedirectToAction("OrdersList");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ExportInvoiceToExcel(Guid orderId)
+        {
+            var order = await _context.orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.User) // Bao gồm User để lấy Username
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var stream = new MemoryStream();
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Invoice");
+
+                // Header
+                worksheet.Cells["A1"].Value = "Invoice";
+                worksheet.Cells["A1:D1"].Merge = true;
+                worksheet.Cells["A1"].Style.Font.Bold = true;
+                worksheet.Cells["A1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                worksheet.Cells["A2"].Value = "Order ID";
+                worksheet.Cells["B2"].Value = order.OrderId.ToString();
+
+                worksheet.Cells["A3"].Value = "Customer";
+                worksheet.Cells["B3"].Value = order.User.Username; // Chỉnh sửa để lấy Username
+
+                worksheet.Cells["A4"].Value = "Order Date";
+                worksheet.Cells["B4"].Value = order.CreatedAt.ToString("dd/MM/yyyy");
+                worksheet.Cells["A5"].Value = "Trạng thái";
+                worksheet.Cells["B5"].Value = order.Status;
+
+                // Table Header
+                worksheet.Cells["A6"].Value = "Product Name";
+                worksheet.Cells["B6"].Value = "Quantity";
+                worksheet.Cells["C6"].Value = "Price";
+                worksheet.Cells["D6"].Value = "Total";
+                worksheet.Cells["A6:D6"].Style.Font.Bold = true;
+
+                // Order Items
+                var row = 7;
+                foreach (var item in order.OrderItems)
+                {
+                    worksheet.Cells[row, 1].Value = item.Product.Name;
+                    worksheet.Cells[row, 2].Value = item.Quantity;
+                    worksheet.Cells[row, 3].Value = item.Price;
+                    worksheet.Cells[row, 4].Value = item.Price * item.Quantity;
+                    row++;
+                }
+
+                // Total Amount
+         
+                worksheet.Cells[row, 3].Value = "Total";
+                worksheet.Cells[row, 3].Style.Font.Bold = true;
+                worksheet.Cells[row, 4].Value = order.TotalAmount;
+
+                // Format Price Columns
+                worksheet.Cells[7, 3, row - 1, 3].Style.Numberformat.Format = "$#,##0.00"; // Format for price in USD
+                worksheet.Cells[7, 4, row - 1, 4].Style.Numberformat.Format = "$#,##0.00"; // Format for total per item in USD
+                worksheet.Cells[row, 4].Style.Numberformat.Format = "$#,##0.00"; // Format for total amount in USD
+                package.Save();
+            }
+
+            stream.Position = 0;
+            var fileName = $"Invoice_{order.OrderId}.xlsx";
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
 
     }
 }

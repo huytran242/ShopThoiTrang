@@ -7,22 +7,28 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using WebThoiTrang.Models;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using WebThoiTrang.Service;
+using WebThoiTrang.Interface;
 
 
 namespace WebThoiTrang.Controllers
 {
     public class AdminController : BaseController
     {
+        private readonly IProductService _productService;
         private readonly ILogger<AdminController> _logger;
         private readonly DbContextShop _context;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public AdminController(ILogger<AdminController> logger, DbContextShop context, IWebHostEnvironment hostEnvironment)
+        public AdminController(ILogger<AdminController> logger, DbContextShop context, IWebHostEnvironment hostEnvironment, IProductService productService)
         {
             _logger = logger;
             _context = context;
             _hostEnvironment = hostEnvironment;
+            _productService = productService;
         }
 
         public IActionResult Logout()
@@ -34,7 +40,7 @@ namespace WebThoiTrang.Controllers
             return RedirectToAction("IndexLogin", "Login");
         }
 
-      
+       
         public async Task<IActionResult> IndexAdmin()
         {
             string username = HttpContext.Session.GetString("Username");
@@ -170,7 +176,7 @@ namespace WebThoiTrang.Controllers
                  .Include(o => o.User)
                  .Include(o => o.OrderItems)
                      .ThenInclude(oi => oi.Product)
-                 .Where(o => o.Status == "Đã xác nhận bởi cửa hàng");
+                 .Where(o => o.Status == "Đã xác nhận bởi cửa hàng" || o.Status == "Đã xác nhận thanh toán khi nhận hàng");
 
             // Filter by the searchDate if it is provided
             if (searchDate.HasValue)
@@ -394,9 +400,58 @@ namespace WebThoiTrang.Controllers
 
             return View(orderList);
         }
+        public async Task<IActionResult> OrdersThanhtoan(DateTime? searchDate)
+        {
 
+
+            var query = _context.orders
+               .Include(o => o.User)
+               .Include(o => o.OrderItems)
+                   .ThenInclude(oi => oi.Product)
+           .Where(o => o.Status == "Chưa thanh toán");
+
+            // Filter by the searchDate if it is provided
+            if (searchDate.HasValue)
+            {
+                // Assuming the searchDate is for a specific day (e.g., searching for orders on a particular date)
+                var startDate = searchDate.Value.Date;
+                var endDate = startDate.AddDays(1); // Include the whole day
+
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            // Retrieve the filtered orders
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+            // Map the orders to the OrderListDto
+            var orderList = orders.Select(order => new OrdersListDto
+            {
+                OrderId = order.OrderId,
+                Username = order.User.Username,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                Products = order.OrderItems.Select(oi => new ProductDto
+                {
+                    ProductId = oi.ProductId,
+                    Name = oi.Product.Name,
+                    Price = oi.Price,
+                    img = oi.Product.img,
+                    Quantity = oi.Quantity
+                }).ToList()
+            }).ToList();
+
+            if (orderList == null || !orderList.Any())
+            {
+                // Trả về view với danh sách rỗng
+                return View(new List<OrdersListDto>());
+            }
+
+            return View(orderList);
+        }
         [HttpPost]
-        public async Task<IActionResult> ConfirmOrder(Guid orderId)
+        public async Task<IActionResult> ConfirmOrder(Guid orderId,string paymentMethod)
         {
             var order = await _context.orders.FindAsync(orderId);
             if (order == null)
@@ -404,14 +459,28 @@ namespace WebThoiTrang.Controllers
                 return NotFound();
             }
 
-            order.Status = "Đã xác nhận bởi cửa hàng";
+            order.Status = paymentMethod == "Đã xác nhận bởi cửa hàng" ? "Đã xác nhận bởi cửa hàng" : "Đã xác nhận thanh toán khi nhận hàng";
          
             await _context.SaveChangesAsync();
           
             return RedirectToAction("OrdersComFirm");
 
         }
+        public async Task<IActionResult> ConfirmOrderThanhToan(Guid orderId)
+        {
+            var order = await _context.orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
 
+            order.Status = "Đã thanh toán";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OrdersComFirm");
+
+        }
         [HttpPost]
         public async Task<IActionResult> DeleteOrder(Guid orderId)
         {
@@ -422,6 +491,15 @@ namespace WebThoiTrang.Controllers
             }
 
             order.Status = "Đã xóa";
+            foreach (var item in order.OrderItems)
+            {
+                var product = item.Product; // Sử dụng liên kết đã bao gồm sản phẩm
+
+                if (product != null)
+                {
+                    product.Stock += item.Quantity; // Cộng số lượng vào kho
+                }
+            }
             await _context.SaveChangesAsync();
 
             return RedirectToAction("OrdersDelete");
@@ -451,7 +529,7 @@ namespace WebThoiTrang.Controllers
                 return NotFound();
             }
 
-            order.Status = "Đã giao";
+            order.Status = "Đã giao ";
             await _context.SaveChangesAsync();
 
             return RedirectToAction("DagiaoOrder");
@@ -460,11 +538,18 @@ namespace WebThoiTrang.Controllers
 
 
 
-        public async Task<IActionResult> ProductAdmin()
+        public async Task<IActionResult> ProductAdmin(string searchTerm)
         {
-            var products = await _context.products.Include(p => p.Category).ToListAsync();
+            var products = string.IsNullOrWhiteSpace(searchTerm) ?
+                await _context.products.Include(p => p.Category).ToListAsync() :
+                await _context.products.Include(p => p.Category)
+                                       .Where(p => p.Name.Contains(searchTerm) ||
+                                                   p.Description.Contains(searchTerm) ||
+                                                   p.Category.Name.Contains(searchTerm))
+                                       .ToListAsync();
+
+            ViewData["SearchTerm"] = searchTerm;
             return View(products);
-            
         }
 
         // GET: Products/Details/5
@@ -920,7 +1005,78 @@ namespace WebThoiTrang.Controllers
                 TotalRevenue = totalRevenue
             };
         }
+        [HttpGet]
+        public async Task<IActionResult> ExportInvoiceToExcel(Guid orderId)
+        {
+            var order = await _context.orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.User) // Bao gồm User để lấy Username
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var stream = new MemoryStream();
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Invoice");
+
+                // Header
+                worksheet.Cells["A1"].Value = "Invoice";
+                worksheet.Cells["A1:D1"].Merge = true;
+                worksheet.Cells["A1"].Style.Font.Bold = true;
+                worksheet.Cells["A1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                worksheet.Cells["A2"].Value = "Order ID";
+                worksheet.Cells["B2"].Value = order.OrderId.ToString();
+
+                worksheet.Cells["A3"].Value = "Customer";
+                worksheet.Cells["B3"].Value = order.User.Username; // Chỉnh sửa để lấy Username
+
+                worksheet.Cells["A4"].Value = "Order Date";
+                worksheet.Cells["B4"].Value = order.CreatedAt.ToString("dd/MM/yyyy");
+                worksheet.Cells["A5"].Value = "Trạng thái";
+                worksheet.Cells["B5"].Value = order.Status;
+
+                // Table Header
+                worksheet.Cells["A6"].Value = "Product Name";
+                worksheet.Cells["B6"].Value = "Quantity";
+                worksheet.Cells["C6"].Value = "Price";
+                worksheet.Cells["D6"].Value = "Total";
+                worksheet.Cells["A6:D6"].Style.Font.Bold = true;
+
+                // Order Items
+                var row = 7;
+                foreach (var item in order.OrderItems)
+                {
+                    worksheet.Cells[row, 1].Value = item.Product.Name;
+                    worksheet.Cells[row, 2].Value = item.Quantity;
+                    worksheet.Cells[row, 3].Value = item.Price;
+                    worksheet.Cells[row, 4].Value = item.Price * item.Quantity;
+                    row++;
+                }
+
+                // Total Amount
+
+                worksheet.Cells[row, 3].Value = "Total";
+                worksheet.Cells[row, 3].Style.Font.Bold = true;
+                worksheet.Cells[row, 4].Value = order.TotalAmount;
+
+                // Format Price Columns
+                worksheet.Cells[7, 3, row - 1, 3].Style.Numberformat.Format = "$#,##0.00"; // Format for price in USD
+                worksheet.Cells[7, 4, row - 1, 4].Style.Numberformat.Format = "$#,##0.00"; // Format for total per item in USD
+                worksheet.Cells[row, 4].Style.Numberformat.Format = "$#,##0.00"; // Format for total amount in USD
+                package.Save();
+            }
+
+            stream.Position = 0;
+            var fileName = $"Invoice_{order.OrderId}.xlsx";
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
 
 
 

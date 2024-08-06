@@ -1,4 +1,5 @@
 ﻿using Data;
+using Microsoft.EntityFrameworkCore;
 using WebThoiTrang.Interface;
 using WebThoiTrang.Models;
 
@@ -45,6 +46,20 @@ namespace WebThoiTrang.Service
         {
             var product = _context.products.FirstOrDefault(p => p.ProductId == productId);
             return product?.Stock ?? 0;
+        }
+        public async Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new List<Product>();
+            }
+
+            return await _context.products
+                .Include(p => p.Category)
+                .Where(p => p.Name.Contains(searchTerm) ||
+                            p.Description.Contains(searchTerm) ||
+                            p.Category.Name.Contains(searchTerm))
+                .ToListAsync();
         }
 
     }

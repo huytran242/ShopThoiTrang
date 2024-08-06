@@ -95,20 +95,22 @@
                         <tbody>
                             @foreach (var item in order.Products)
                             {
-                                <tr>
-                                    <td>
-                                        <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
-                                    </td>
-                                    <td>@item.Name</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Price.ToString("C")</td>
-                                </tr>
+                            <tr>
+                                <td>
+                                    <img src="@item.img" alt="@item.Name" class="img-fluid rounded-3" style="width: 100px;" />
+                                </td>
+                                <td>@item.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price.ToString("C")</td>
+                            </tr>
                             }
                         </tbody>
                     </table>
 
-         
-               
+                    <a asp-action="ExportInvoiceToExcel" asp-route-orderId="@order.OrderId" class="btn btn-primary">
+                        Export to Excel
+                    </a>
+
 
 
 

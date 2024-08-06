@@ -115,11 +115,24 @@
                         </table>
 
                         <!-- Button to confirm order completion -->
-                    <form asp-action="ConfirmOrder" asp-controller="Admin" method="post" style="display:inline;">
+                  
+                    <form method="post" asp-action="ConfirmOrder">
                         <input type="hidden" name="orderId" value="@order.OrderId" />
-                        <button type="submit" class="btn btn-success mt-2">Confirm</button>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="prepaid" value="Prepaid">
+                            <label class="form-check-label" for="prepaid">
+
+                            </label>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary" name="paymentMethod" value="Đã xác nhận bởi cửa hàng">Đã thanh toán trước xác nhận</button>
+                            <button type="submit" class="btn btn-secondary" name="paymentMethod" value="Đã xác nhận thanh toán khi nhận hàng">Thanh toán khi nhận hàng</button>
+                           
+
+                        </div>
+
                     </form>
-                    
                 
                        
 

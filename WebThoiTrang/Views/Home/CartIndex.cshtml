@@ -148,11 +148,30 @@
 
     <!-- JavaScript -->
     <script>
-             
+        document.addEventListener("DOMContentLoaded", function () {
+            var quantityInputs = document.querySelectorAll('input[name="quantity"]');
+
+            quantityInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    var productId = this.id.split('-')[1];
+                    var quantity = parseInt(this.value, 10);
+
+                    // Kiểm tra số lượng âm
+                    if (quantity < 1) {
+                        alert("Số lượng sản phẩm không được nhỏ hơn 1");
+                        this.value = 1;
+                        quantity = 1;
+                    }
+
+                    // Cập nhật giá trong frontend
+                    updateQuantity(productId, quantity);
+                });
+            });
+        });
         const stockData = @Html.Raw(JsonConvert.SerializeObject(@stockData));
         function updateQuantity(productId) {
             var quantityInput = document.getElementById('quantity-' + productId);
-            var quantity = parseInt(quantityInput.value, 10);
+            var quantity = parseInt(quantityInput.value);
             
             if (quantity > stockData[productId]) {
                 // Hiển thị thông báo lỗi nếu số lượng vượt quá tồn kho
