@@ -10,35 +10,28 @@ namespace Data
 {
     public class Product
     {
-        [Key]
-        public Guid ProductId { get; set; }
+        public Guid Id { get; set; }
+        public string Ma { get; set; }
 
-        [Required(ErrorMessage = "Product name is required.")]
-        [StringLength(100, ErrorMessage = "Product name cannot be longer than 100 characters.")]
-        public string Name { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Ten { get; set; }
 
-        [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
-        public string Description { get; set; }
+        public decimal Gia { get; set; }
+        public int NamSX { get; set; }
+        public string MoTa { get; set; }
 
-        [Required(ErrorMessage = "Price is required.")]
-        [Range(0.01, 10000.00, ErrorMessage = "Price must be between 0.01 and 10000.00.")]
-        public decimal Price { get; set; }
+        public Guid ProductTypeId { get; set; }
+        public Guid BrandId { get; set; }
+        public Guid ManufacturerId { get; set; }
+        public Guid MaterialId { get; set; }
+        public Material Material { get; set; }
+        public ProductType ProductType { get; set; }
+        public Brand Brand { get; set; }
+        public Manufacturer Manufacturer { get; set; }
 
-        [Required(ErrorMessage = "Stock is required.")]
-        [Range(0, int.MaxValue, ErrorMessage = "Stock must be a non-negative number.")]
-        public int Stock { get; set; }
+        public ICollection<ProductDetail> ProductDetails { get; set; }
 
-        [Required(ErrorMessage = "Category is required.")]
-        public Guid CategoryId { get; set; }
-        [JsonIgnore] // Loại bỏ thuộc tính Category khỏi việc serialize
-        public Category Category { get; set; }
-        [Required(ErrorMessage = "Product Img is required.")]
-        public string img { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        [JsonIgnore]
-        public ICollection<OrderItem> OrderItems { get; set; } 
     }
 
 }

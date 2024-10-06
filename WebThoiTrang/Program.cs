@@ -47,9 +47,9 @@ builder.Services.AddSession(options =>
 });
 
 // Register CartService
-builder.Services.AddScoped<CartService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddLogging();
+//builder.Services.AddScoped<CartService>();
+//builder.Services.AddScoped<IProductService, ProductService>();
+//builder.Services.AddLogging();
 
 var app = builder.Build();
 

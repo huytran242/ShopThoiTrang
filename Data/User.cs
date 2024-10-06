@@ -9,8 +9,8 @@ namespace Data
 {
     public class User
     {
-        [Key]
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
+        public string Ma { get; set; }
 
         [Required(ErrorMessage = "Username is required.")]
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
@@ -25,9 +25,11 @@ namespace Data
         [StringLength(120, ErrorMessage = "Email cannot be longer than 120 characters.")]
         public string Email { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayCapNhat { get; set; }
+        public string TrangThai { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<Bill> Bills { get; set; }
     }
 
 }

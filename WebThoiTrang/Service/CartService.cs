@@ -1,145 +1,145 @@
-﻿using Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using WebThoiTrang.Controllers;
-using WebThoiTrang.Extensions;
-using WebThoiTrang.Models;
+﻿//using Data;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Logging;
+//using Newtonsoft.Json;
+//using WebThoiTrang.Controllers;
+//using WebThoiTrang.Extensions;
+//using WebThoiTrang.Models;
 
-namespace WebThoiTrang.Service
-{
-    public class CartService
-    {
-        // CartService.cs
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private const string CartSessionKey = "CartSessionKey";
-        private readonly DbContextShop _dbContext;
-        private readonly ILogger<CartService> _logger;
-        public CartService(IHttpContextAccessor httpContextAccessor, DbContextShop dbContext, ILogger<CartService> logger)
-        {
-            _httpContextAccessor = httpContextAccessor;
-            _dbContext = dbContext;
-            _logger = logger;
+//namespace WebThoiTrang.Service
+//{
+//    public class CartService
+//    {
+//        // CartService.cs
+//        private readonly IHttpContextAccessor _httpContextAccessor;
+//        private const string CartSessionKey = "CartSessionKey";
+//        private readonly DbContextShop _dbContext;
+//        private readonly ILogger<CartService> _logger;
+//        public CartService(IHttpContextAccessor httpContextAccessor, DbContextShop dbContext, ILogger<CartService> logger)
+//        {
+//            _httpContextAccessor = httpContextAccessor;
+//            _dbContext = dbContext;
+//            _logger = logger;
 
-        }
-        private List<OrderItem> cartItems = new List<OrderItem>();
-        public void AddToCart(OrderItem orderItem)
-        {
-            var cart = GetCart();
+//        }
+//        private List<OrderItem> cartItems = new List<OrderItem>();
+//        public void AddToCart(OrderItem orderItem)
+//        {
+//            var cart = GetCart();
 
-            // Tải dữ liệu sản phẩm đầy đủ
-            if (orderItem.ProductId != Guid.Empty)
-            {
-                orderItem.Product = _dbContext.products
-                    .Include(p => p.Category)
-                    .FirstOrDefault(p => p.ProductId == orderItem.ProductId);
-            }
+//            // Tải dữ liệu sản phẩm đầy đủ
+//            if (orderItem.ProductId != Guid.Empty)
+//            {
+//                orderItem.Product = _dbContext.products
+//                    .Include(p => p.Category)
+//                    .FirstOrDefault(p => p.ProductId == orderItem.ProductId);
+//            }
 
-            cart.Add(orderItem);
-            SaveCart(cart);
-        }
+//            cart.Add(orderItem);
+//            SaveCart(cart);
+//        }
 
-        public void UpdateCart(OrderItem updatedItem)
-        {
-            var cart = GetCart();
+//        public void UpdateCart(OrderItem updatedItem)
+//        {
+//            var cart = GetCart();
 
-            var existingItem = cart.FirstOrDefault(item => item.ProductId == updatedItem.ProductId);
-            if (existingItem != null)
-            {
-                // Cập nhật số lượng sản phẩm
-                existingItem.Quantity = updatedItem.Quantity;
+//            var existingItem = cart.FirstOrDefault(item => item.ProductId == updatedItem.ProductId);
+//            if (existingItem != null)
+//            {
+//                // Cập nhật số lượng sản phẩm
+//                existingItem.Quantity = updatedItem.Quantity;
 
-                // Nếu số lượng sản phẩm là 0 hoặc âm, loại bỏ sản phẩm khỏi giỏ hàng
-                if (existingItem.Quantity <= 0)
-                {
-                    cart.Remove(existingItem);
-                }
-            }
-            else
-            {
-                // Nếu sản phẩm không tồn tại trong giỏ hàng, thêm sản phẩm mới
-                cart.Add(updatedItem);
-            }
+//                // Nếu số lượng sản phẩm là 0 hoặc âm, loại bỏ sản phẩm khỏi giỏ hàng
+//                if (existingItem.Quantity <= 0)
+//                {
+//                    cart.Remove(existingItem);
+//                }
+//            }
+//            else
+//            {
+//                // Nếu sản phẩm không tồn tại trong giỏ hàng, thêm sản phẩm mới
+//                cart.Add(updatedItem);
+//            }
 
-            // Lưu giỏ hàng vào phiên làm việc
-            SaveCart(cart);
-        }
-        public int GetProductStock(Guid productId)
-        {
-            var product = _dbContext.products.Find(productId);
-            return product?.Stock ?? 0;
-        }
+//            // Lưu giỏ hàng vào phiên làm việc
+//            SaveCart(cart);
+//        }
+//        public int GetProductStock(Guid productId)
+//        {
+//            var product = _dbContext.products.Find(productId);
+//            return product?.Stock ?? 0;
+//        }
 
-        public void UpdateQuantity(Guid productId, int quantity)
-        {
-            var session = _httpContextAccessor.HttpContext.Session;
-            var cart = GetCart();
+//        public void UpdateQuantity(Guid productId, int quantity)
+//        {
+//            var session = _httpContextAccessor.HttpContext.Session;
+//            var cart = GetCart();
 
-            var cartItem = cart.SingleOrDefault(item => item.ProductId == productId);
-            if (cartItem != null)
-            {
-                var product =_dbContext.products.Find(productId);
-                if (product == null || quantity > product.Stock)
-                {
-                    throw new Exception($"Số lượng sản phẩm {product?.Name} mà quý khách chọn vượt quá số lượng kho.");
-                }
+//            var cartItem = cart.SingleOrDefault(item => item.ProductId == productId);
+//            if (cartItem != null)
+//            {
+//                var product =_dbContext.products.Find(productId);
+//                if (product == null || quantity > product.Stock)
+//                {
+//                    throw new Exception($"Số lượng sản phẩm {product?.Name} mà quý khách chọn vượt quá số lượng kho.");
+//                }
 
-                cartItem.Quantity = quantity;
-                session.SetObjectAsJson("Cart", cart);
-            }
-        }
-        public List<OrderItem> GetCart()
-        {
-            var session = _httpContextAccessor.HttpContext.Session;
-            var cartJson = session.GetString(CartSessionKey);
+//                cartItem.Quantity = quantity;
+//                session.SetObjectAsJson("Cart", cart);
+//            }
+//        }
+//        public List<OrderItem> GetCart()
+//        {
+//            var session = _httpContextAccessor.HttpContext.Session;
+//            var cartJson = session.GetString(CartSessionKey);
 
-            if (string.IsNullOrEmpty(cartJson))
-            {
-                return new List<OrderItem>(); // Nếu giỏ hàng rỗng, trả về danh sách rỗng
-            }
+//            if (string.IsNullOrEmpty(cartJson))
+//            {
+//                return new List<OrderItem>(); // Nếu giỏ hàng rỗng, trả về danh sách rỗng
+//            }
 
-            var cart = JsonConvert.DeserializeObject<List<OrderItem>>(cartJson);
+//            var cart = JsonConvert.DeserializeObject<List<OrderItem>>(cartJson);
 
-            // Debugging: Kiểm tra số lượng giỏ hàng
-            Console.WriteLine("Cart Count: " + cart.Count);
+//            // Debugging: Kiểm tra số lượng giỏ hàng
+//            Console.WriteLine("Cart Count: " + cart.Count);
 
-            // Populating product details
-            foreach (var item in cart)
-            {
-                // Kiểm tra nếu ProductId không null, tải dữ liệu sản phẩm từ cơ sở dữ liệu
-                if (item.ProductId != Guid.Empty)
-                {
-                    item.Product = _dbContext.products
-                        .Include(p => p.Category)
-                        .FirstOrDefault(p => p.ProductId == item.ProductId);
-                }
-            }
+//            // Populating product details
+//            foreach (var item in cart)
+//            {
+//                // Kiểm tra nếu ProductId không null, tải dữ liệu sản phẩm từ cơ sở dữ liệu
+//                if (item.ProductId != Guid.Empty)
+//                {
+//                    item.Product = _dbContext.products
+//                        .Include(p => p.Category)
+//                        .FirstOrDefault(p => p.ProductId == item.ProductId);
+//                }
+//            }
 
-            return cart;
-        }
-
-
+//            return cart;
+//        }
 
 
 
 
 
 
-        public void SaveCart(List<OrderItem> cart)
-        {
-            var session = _httpContextAccessor.HttpContext.Session;
-            var cartJson = JsonConvert.SerializeObject(cart, new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
-
-            // Debugging: Log or inspect the cart JSON
-            Console.WriteLine("Saving Cart JSON: " + cartJson);
-
-            session.SetString(CartSessionKey, cartJson);
-        }
 
 
-    }
+//        public void SaveCart(List<OrderItem> cart)
+//        {
+//            var session = _httpContextAccessor.HttpContext.Session;
+//            var cartJson = JsonConvert.SerializeObject(cart, new JsonSerializerSettings
+//            {
+//                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+//            });
 
-}
+//            // Debugging: Log or inspect the cart JSON
+//            Console.WriteLine("Saving Cart JSON: " + cartJson);
+
+//            session.SetString(CartSessionKey, cartJson);
+//        }
+
+
+//    }
+
+//}
